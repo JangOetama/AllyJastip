@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching data:', error));
     };
 
-    // Fungsi untuk mengirim data ke Hugging Face API
+    // Fungsi untuk mengirim data ke Hugging Face API menggunakan Token Fine-Grained
     async function generateIndonesianDescription(inputText) {
-        const API_URL = "https://api-inference.huggingface.co/models/google/gemma-7b"; // Ganti dengan model yang sesuai
-        const API_TOKEN = "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"; // Ganti dengan token Anda
+        const API_URL = "https://api-inference.huggingface.co/models/google/gemma-7b"; // Ganti dengan model yang sesuai [[4]]
+        const API_TOKEN = "YOUR_FINE_GRAINED_TOKEN"; // Ganti dengan token Fine-Grained Anda [[8]]
 
         try {
             const response = await fetch(API_URL, {
@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     inputs: inputText
                 })
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
             const data = await response.json();
             return data[0]?.generated_text || "Deskripsi tidak tersedia";
@@ -53,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
 
         // Menggunakan Hugging Face API untuk menghasilkan deskripsi dalam bahasa Indonesia
-        const generatedCategory = await generateIndonesianDescription(`Translate to Indonesian buat semenarik mungkin: ${category}`);
+        const generatedCategory = await generateIndonesianDescription(`Translate to Indonesian: ${category}`);
         const generatedColor = await generateIndonesianDescription(`Translate to Indonesian: ${desc.itemColor}`);
         const generatedPattern = await generateIndonesianDescription(`Translate to Indonesian: ${desc.itemPattern}`);
 
