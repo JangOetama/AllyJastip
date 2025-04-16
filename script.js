@@ -69,7 +69,7 @@ ${pattern ? `${pattern}\n` : ''}`;
 
             const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
-~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)} (Hemat Rp ${formatPrice(originalPrice-jastipPrice)}!)
+    ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice-jastipPrice)}!)_
 
 🎯 *Skema Diskon Menarik :*
 ✅ Min. ${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs
@@ -89,8 +89,7 @@ ${descriptionText}
 
 ====================
 🛒 List Pemesanan :
-Nama + 4 Digit Akhir No WA
-
+    Nama + 4 Digit Akhir No WA
 1. ...
             `;
 
