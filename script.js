@@ -12,13 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Parsing data harga dari JSON
                 const originalPrice = parsePrice(product.originalPrice);
-                const discountedPrice = parsePrice(product.discountedPrice);
                 const discountPercentage = parseFloat(product.discountPercentage);
 
                 // Hitung harga setelah diskon jastip (10% dari harga awal)
                 const jastipDiscount = 10; // Jastip discount percentage
-                const baseDiscountedPrice = originalPrice * (1 - discountPercentage / 100);
-                const jastipPrice = baseDiscountedPrice * (1 - jastipDiscount / 100);
+                const baseDiscountedPrice = originalPrice * (1 - (discountPercentage) / 100);
+                const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
 
                 // Hitung DP berdasarkan skema diskon
                 const dpPercentage = 50; // DP is 50% of the final price
@@ -27,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const min10Discount = 7; // Min. 10 pcs discount
 
                 const calculateDP = (quantity, discount) => {
-                    const finalPrice = baseDiscountedPrice * (1 - discount / 100);
+                    const finalPrice = jastipPrice * (1 - discount / 100);
                     return (finalPrice * dpPercentage) / 100;
                 };
 
@@ -41,7 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Deskripsi produk
                 const description = `
                     ‼️ Open PO Barang Lock N Lock \n
-                    Harga JKK : Rp ${formatPrice(originalPrice)}\n
+                    Harga JKK : 
+                    Rp ${formatPrice(jastipPrice)}\n
                     DP Rp ${formatPrice(dp3)}/pcs (Min. 3 pcs)\n
                     DP Rp ${formatPrice(dp5)}/pcs (Min. 5 pcs)\n
                     DP Rp ${formatPrice(dp10)}/pcs (Min. 10 pcs)\n
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td><img src="${product.image}" alt="${product.name}" style="width: 50px; height: auto;"></td>
                     <td>${product.name}</td>
                     <td>Rp ${formatPrice(originalPrice)}</td>
-                    <td>Rp ${formatPrice(jastipPrice)}</td>
+                    <td>Rp ${formatPrice(baseDiscountedPrice)}</td>
                     <td>${discountPercentage}%</td>
                     <td style="white-space: pre-wrap;">${description}</td> <!-- Deskripsi -->
                 `;
