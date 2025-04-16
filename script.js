@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const generateDescription = (desc) => {
                 if (!desc) return 'Deskripsi tidak tersedia';
 
-                const capacityML = desc.capacityML ? `${desc.capacityML} mL` : '';
-                const capacityL = desc.capacityL ? `${desc.capacityL} L` : '';
-                const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join('-');
+                const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
+                const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
+                const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' ');
                 const color = desc.itemColor ? `- Warna: ${desc.itemColor}` : '';
                 const pattern = desc.itemPattern ? `- Pola: ${desc.itemPattern}` : '';
 
@@ -72,12 +72,11 @@ ${pattern ? `${pattern}\n` : ''}`;
     ~Rp ${formatPrice(originalPrice)}~
     *Rp ${formatPrice(jastipPrice)}*\n
 *Skema Diskon :*
-    Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
-    Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
-    Min. ${min3} pcs : Rp ${formatPrice(jastipPrice3)} /pcs\n
+- Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
+- Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
+- Min. ${min3} pcs : Rp ${formatPrice(jastipPrice3)} /pcs\n
 *🌻 Deskripsi :*
-${descriptionText}
-*🌱 Detail Order :*
+${descriptionText}*🌱 Detail Order :*
 * Close PO 17 April 25*
 * Estimasi ready end Juni 25*\n\n
 ====================
