@@ -25,11 +25,12 @@ for item in soup.select('#mydivproduct .product__item'):
     original_price_text = item.select_one('.product__item__text h5 s').text.strip().replace('Rp. ', '')
     original_price = float(original_price_text.replace(',', ''))
 
-    discount_percentage_text = item.select_one('.product__item__text h5 sup font').text.strip().replace('-', '').replace('%', '')
+    discount_percentage_text = item.select_one('.product__item__text h5 sup font').text.strip()
     discount_percentage = 0
 
-    if re.match(r'^\d+(\.\d+)?$', discount_percentage_text):
-        discount_percentage = float(discount_percentage_text)
+    match = re.search(r'(-?\d+(\.\d+)?)%', discount_percentage_text)
+    if match:
+        discount_percentage = float(match.group(1))
 
     discounted_price = original_price - (original_price * (discount_percentage / 100))
     image_tag = item.select_one('.product__item__pic')
