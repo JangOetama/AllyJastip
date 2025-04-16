@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fungsi untuk mengirim data ke Hugging Face API menggunakan Token Fine-Grained
     async function generateIndonesianDescription(inputText) {
         const API_URL = "https://api-inference.huggingface.co/models/google/gemma-7b"; // Ganti dengan model yang sesuai [[4]]
-        const API_TOKEN = "YOUR_FINE_GRAINED_TOKEN"; // Ganti dengan token Fine-Grained Anda [[8]]
+        const API_TOKEN = "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"; // Ganti dengan token Fine-Grained Anda [[8]]
 
         try {
             const response = await fetch(API_URL, {
