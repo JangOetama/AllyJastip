@@ -30,7 +30,7 @@ for item in soup.select('#mydivproduct .product__item'):
 
     match = re.search(r'(-?\d+(\.\d+)?)%', discount_percentage_text)
     if match:
-        discount_percentage = float(match.group(1))
+        discount_percentage = float(match.group(1).replace('-', ''))
 
     discounted_price = original_price - (original_price * (discount_percentage / 100))
     image_tag = item.select_one('.product__item__pic')
