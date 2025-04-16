@@ -40,11 +40,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
             const description = `
-                ‼️ *Open PO Barang Lock N Lock ${product.name}*  \n
+                ‼️ *Barang Lock & Lock ${product.name}*  \n
 *Harga Ally Jastip :* 
     ~Rp ${formatPrice(originalPrice)}~
-    Rp ${formatPrice(jastipPrice)}
-    *DP Rp ${formatPrice(dpJastipPrice)} /pcs*\n
+    Rp ${formatPrice(jastipPrice)}\n
 *Skema Diskon :*
     Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
     Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
