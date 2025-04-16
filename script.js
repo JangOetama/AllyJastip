@@ -17,8 +17,55 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching data:', error));
     };
 
+    // Fungsi untuk mengirim data ke Hugging Face API
+    async function generateIndonesianDescription(inputText) {
+        const API_URL = "https://api-inference.huggingface.co/models/google/gemma-7b"; // Ganti dengan model yang sesuai
+        const API_TOKEN = "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"; // Ganti dengan token Anda
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_TOKEN}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    inputs: inputText
+                })
+            });
+
+            const data = await response.json();
+            return data[0]?.generated_text || "Deskripsi tidak tersedia";
+        } catch (error) {
+            console.error("Error fetching data from Hugging Face API:", error);
+            return "Deskripsi tidak tersedia";
+        }
+    }
+
+    // Fungsi untuk menghasilkan deskripsi produk dalam bahasa Indonesia
+    const generateDescription = async (desc) => {
+        if (!desc) return 'Deskripsi tidak tersedia';
+
+        const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
+        const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
+        const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
+        const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
+        const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
+
+        // Menggunakan Hugging Face API untuk menghasilkan deskripsi dalam bahasa Indonesia
+        const generatedCategory = await generateIndonesianDescription(`Translate to Indonesian buat semenarik mungkin: ${category}`);
+        const generatedColor = await generateIndonesianDescription(`Translate to Indonesian: ${desc.itemColor}`);
+        const generatedPattern = await generateIndonesianDescription(`Translate to Indonesian: ${desc.itemPattern}`);
+
+        return `- *Nama Item :* ${desc.itemNamebyHC || desc.itemName}
+- *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
+- *Kategori :* ${generatedCategory}
+${generatedColor ? `${generatedColor}\n` : ''}
+${generatedPattern ? `${generatedPattern}\n` : ''}`;
+    };
+
     // Fungsi untuk merender tabel
-    const renderTable = () => {
+    const renderTable = async () => {
         const jastipDiscount = parseFloat(document.getElementById('jastipDiscount').value) || 0;
         const min1 = parseInt(document.getElementById('min1').value) || 3;
         const min2 = parseInt(document.getElementById('min2').value) || 5;
@@ -27,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tableBody.innerHTML = '';
 
-        productData.forEach(product => {
+        for (const product of productData) {
             // Mencari deskripsi yang sesuai berdasarkan itemCode
             const description = descriptionData.find(desc => desc.itemCode === product.name);
 
@@ -48,28 +95,12 @@ document.addEventListener('DOMContentLoaded', function () {
             // Format harga
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
-            // Membuat deskripsi baru berdasarkan description.json
-            const generateDescription = (desc) => {
-                if (!desc) return 'Deskripsi tidak tersedia';
-
-                const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
-                const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
-                const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
-                const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
-                const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
-
-                return `- *Nama Item :* ${desc.itemNamebyHC || desc.itemName}
-- *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
-- *Kategori :* ${category}
-${color ? `${color}\n` : ''}
-${pattern ? `${pattern}\n` : ''}`;
-            };
-
-            const descriptionText = generateDescription(description);
+            // Menghasilkan deskripsi dalam bahasa Indonesia
+            const descriptionText = await generateDescription(description);
 
             const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
-    ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice-jastipPrice)}!)_
+    ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
 
 🎯 *Skema Diskon Menarik :*
 ✅ Min. *${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs*
@@ -92,36 +123,20 @@ ${descriptionText}📅 *Detail Order :*
 1. ...
             `;
 
-// Fungsi untuk membuat tautan WhatsApp
-const createWhatsAppLink = (description, imageUrl) => {
-    const text = encodeURIComponent(description);
-    return `https://wa.me/?text=${text}`;
-};
-
-// Modifikasi bagian pembuatan baris tabel
-const row = document.createElement('tr');
-row.innerHTML = `
-    <td><img src="${product.image}" alt="${product.name}" style="width: 50px; height: auto;"></td>
-    <td>${product.name}</td>
-    <td>Rp ${formatPrice(originalPrice)}</td>
-    <td>Rp ${formatPrice(baseDiscountedPrice)}</td>
-    <td>${discountPercentage}%</td>
-    <td style="white-space: pre-wrap;">
-        ${fullDescription}
-        <button 
-            class="share-btn" 
-            onclick="window.open('${createWhatsAppLink(fullDescription, product.image)}', '_blank');"
-        >
-            Share to WhatsApp
-        </button>
-    </td>
-`;
-tableBody.appendChild(row);
-        });
+            // Membuat baris tabel
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${product.image}" alt="${product.name}" style="width: 50px; height: auto;"></td>
+                <td>${product.name}</td>
+                <td>Rp ${formatPrice(originalPrice)}</td>
+                <td>Rp ${formatPrice(baseDiscountedPrice)}</td>
+                <td>${discountPercentage}%</td>
+                <td style="white-space: pre-wrap;">${fullDescription}</td>
+            `;
+            tableBody.appendChild(row);
+        }
     };
 
-
-    
     // Event listener untuk form submit
     document.getElementById('configForm').addEventListener('submit', function (event) {
         event.preventDefault();
