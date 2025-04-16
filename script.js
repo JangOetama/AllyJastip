@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const renderTable = () => {
-        const jastipDiscount = parseFloat(document.getElementById('jastipDiscount').value) || 10;
+        const jastipDiscount = parseFloat(document.getElementById('jastipDiscount').value) || 0;
         const min1 = parseInt(document.getElementById('min1').value) || 3;
         const min2 = parseInt(document.getElementById('min2').value) || 5;
         const min3 = parseInt(document.getElementById('min3').value) || 10;
