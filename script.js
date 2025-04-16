@@ -54,33 +54,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
                 const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
-                const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' ');
-                const color = desc.itemColor ? `- Warna: ${desc.itemColor}` : '';
-                const pattern = desc.itemPattern ? `- Pola: ${desc.itemPattern}` : '';
+                const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
+                const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
+                const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
 
-                return `- Nama Item: ${desc.itemNamebyHC || desc.itemName}
-- Kapasitas: ${[capacityML, capacityL].filter(Boolean).join(', ')}
-- Kategori: ${category}
+                return `- *Nama Item :* ${desc.itemNamebyHC || desc.itemName}
+- *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
+- *Kategori :* ${category}
 ${color ? `${color}\n` : ''}
 ${pattern ? `${pattern}\n` : ''}`;
             };
 
             const descriptionText = generateDescription(description);
 
-            const fullDescription = `‼️ *Barang Lock & Lock ${product.name}*  \n
-*Harga Ally Jastip :* 
-    ~Rp ${formatPrice(originalPrice)}~
-    *Rp ${formatPrice(jastipPrice)}*\n
-*Skema Diskon :*
-- Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
-- Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
-- Min. ${min3} pcs : Rp ${formatPrice(jastipPrice3)} /pcs\n
-*🌻 Deskripsi :*
-${descriptionText}*🌱 Detail Order :*
-* Close PO 17 April 25*
-* Estimasi ready end Juni 25*\n\n
+            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name}]* 🌟  \n
+🔥 *Harga Spesial Ally Jastip :*
+~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)} (Hemat Rp ${formatPrice(originalPrice-jastipPrice)}!)
+
+🎯 *Skema Diskon Menarik :*
+✅ Min. ${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs
+✅ Min. ${min2} pcs → Rp ${formatPrice(jastipPrice2)}/pcs
+✅ Min. ${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs
+
+📦 *Deskripsi Produk :*
+${descriptionText}
+📅 *Detail Order :*
+- Close PO: _17 April 2025_
+- Estimasi Ready: _Akhir Juni 2025_
+
+⚠️ *Catatan Penting :*
+- Pembelian minimal *1* pcs .
+- Barang dikirim sesuai urutan pembayaran.
+- Pastikan cek stok warna sebelum memesan!
+
 ====================
-List : Nama + 4 Digit No WA
+🛒 List Pemesanan :
+Nama + 4 Digit Akhir No WA
+
 1. ...
             `;
 
