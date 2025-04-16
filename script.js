@@ -55,16 +55,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 const capacityML = desc.capacityML ? `${desc.capacityML} mL` : '';
                 const capacityL = desc.capacityL ? `${desc.capacityL} L` : '';
                 const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join('-');
-                const color = desc.itemColor ? `Warna: ${desc.itemColor}` : '';
-                const pattern = desc.itemPattern ? `Pola: ${desc.itemPattern}` : '';
+                const color = desc.itemColor ? `- Warna: ${desc.itemColor}` : '';
+                const pattern = desc.itemPattern ? `- Pola: ${desc.itemPattern}` : '';
 
-                return `
-                    Nama Item: ${desc.itemNamebyHC || desc.itemName}
-                    Kapasitas: ${[capacityML, capacityL].filter(Boolean).join(', ')}
-                    Kategori: ${category}
-                    ${color ? `${color}\n` : ''}
-                    ${pattern ? `${pattern}\n` : ''}
-                `;
+                return `- Nama Item: ${desc.itemNamebyHC || desc.itemName}
+- Kapasitas: ${[capacityML, capacityL].filter(Boolean).join(', ')}
+- Kategori: ${category}
+    ${color ? `${color}\n` : ''}
+    ${pattern ? `${pattern}\n` : ''}`;
             };
 
             const descriptionText = generateDescription(description);
@@ -78,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
     Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
     Min. ${min3} pcs : Rp ${formatPrice(jastipPrice3)} /pcs\n
 *🌻 Deskripsi :*
-${descriptionText}\n\n
+${descriptionText}\n
 *🌱 Detail Order :*
 * Close PO 17 April 25*
 * Estimasi ready end Juni 25*\n\n
