@@ -57,15 +57,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (descriptionDetails) {
                 // Format capacity without decimals
-                const capacityML = descriptionDetails.capacityML
-                    ? `${Math.round(parseFloat(descriptionDetails.capacityML))} ML`
-                    : '';
-                const capacityL = descriptionDetails.capacityL
-                    ? parseFloat(descriptionDetails.capacityL) >= 1
-                        ? `${Math.round(parseFloat(descriptionDetails.capacityL))} L`
-                        : `${parseFloat(descriptionDetails.capacityL)} L`
-                    : '';
-
+                const capacityML = descriptionDetails.capacityML;
+                const capacityL = descriptionDetails.capacityL;
                 const category = [descriptionDetails.categoryType, descriptionDetails.typeProduct, descriptionDetails.productType]
                     .filter(Boolean)
                     .join(' - ');
