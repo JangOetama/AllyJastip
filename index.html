@@ -4,27 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        td { white-space: pre-wrap; }
+        form { margin-bottom: 20px; }
+        .form-group { margin-bottom: 10px; }
+        label { display: inline-block; width: 150px; }
+        input[type="number"] { width: 100px; }
+    </style>
 </head>
 <body>
+    <h1>Konfigurasi</h1>
+    <form id="configForm">
+        <div class="form-group">
+            <label for="min1">Min. Pembelian 1:</label>
+            <input type="number" id="min1" name="min1" value="3" min="1">
+        </div>
+        <div class="form-group">
+            <label for="min2">Min. Pembelian 2:</label>
+            <input type="number" id="min2" name="min2" value="5" min="1">
+        </div>
+        <div class="form-group">
+            <label for="min3">Min. Pembelian 3:</label>
+            <input type="number" id="min3" name="min3" value="10" min="1">
+        </div>
+        <div class="form-group">
+            <label for="jastipDiscount">Diskon Jastip (%):</label>
+            <input type="number" id="jastipDiscount" name="jastipDiscount" value="10" min="0" max="100">
+        </div>
+        <div class="form-group">
+            <label for="dpPercentage">DP (%):</label>
+            <input type="number" id="dpPercentage" name="dpPercentage" value="50" min="0" max="100">
+        </div>
+        <div class="form-group">
+            <label for="min3Discount">Diskon Min. 1 (%):</label>
+            <input type="number" id="min3Discount" name="min3Discount" value="9" min="0" max="100">
+        </div>
+        <div class="form-group">
+            <label for="min5Discount">Diskon Min. 2 (%):</label>
+            <input type="number" id="min5Discount" name="min5Discount" value="8" min="0" max="100">
+        </div>
+        <div class="form-group">
+            <label for="min10Discount">Diskon Min. 3 (%):</label>
+            <input type="number" id="min10Discount" name="min10Discount" value="7" min="0" max="100">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
     <h1>Product List</h1>
-<table id="productTable">
-    <thead>
-        <tr>
-            <th>Gambar</th>
-            <th>Nama Item</th>
-            <th>Harga Awal</th>
-            <th>Harga Setelah Diskon</th>
-            <th>Persen Diskon</th>
-            <th>Deskripsi</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Data akan ditambahkan di sini oleh JavaScript -->
-    </tbody>
-</table>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>Gambar</th>
+                <th>Nama Item</th>
+                <th>Harga Awal</th>
+                <th>Harga Setelah Diskon</th>
+                <th>Persen Diskon</th>
+                <th>Deskripsi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data akan ditambahkan di sini oleh JavaScript -->
+        </tbody>
+    </table>
+
     <script src="script.js"></script>
 </body>
 </html>
-
-
