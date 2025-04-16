@@ -1,99 +1,99 @@
-name: Scrape Products
+name: Scrape and Update jastip.json
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [main]
   schedule:
-    - cron: '0 0 * * *'  # Setiap hari pukul 00:00
+    - cron: "0 0 * * *" # Jalankan setiap hari pada tengah malam (UTC)
+  workflow_dispatch: # Izinkan manual trigger
 
 jobs:
-  scrape:
+  scrape-and-update:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Python
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.10'
 
-      # Step 3: Install dependencies
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
-      # Step 4: Run scraping script directly in the workflow
-      - name: Scrape Products
+      - name: Scrape website and generate jastip.json
+        id: scrape
         run: |
           import requests
           from bs4 import BeautifulSoup
           import json
 
-          # URL dan data POST untuk login
-          login_url = 'https://feelbuyshop.com/preorderjastip/?f=login'
-          login_data = {
-              'username': '085161117349',
-              'submit': ''
+          # Login credentials
+          login_url = "https://feelbuyshop.com/preorderjastip/?f=login"
+          home_url = "https://feelbuyshop.com/preorderjastip/?f=home"
+          payload = {
+              "username": "085161117349",
+              "submit": ""
           }
 
-          # URL untuk halaman produk
-          product_url = 'https://feelbuyshop.com/preorderjastip/?f=home'
-
-          # Session untuk menyimpan cookie setelah login
+          # Start session and login
           session = requests.Session()
+          response = session.post(login_url, data=payload)
 
-          # Melakukan POST request untuk login
-          response = session.post(login_url, data=login_data)
+          if response.status_code == 200:
+              print("Login successful")
+          else:
+              raise Exception("Login failed")
 
-          # Melakukan GET request untuk mendapatkan halaman produk
-          product_page = session.get(product_url)
+          # Scrape the home page
+          response = session.get(home_url)
+          soup = BeautifulSoup(response.text, 'html.parser')
 
-          # Parsing halaman produk
-          soup = BeautifulSoup(product_page.content, 'html.parser')
-
-          # Mengambil data produk
           products = []
-          for item in soup.select('#mydivproduct .product__item'):
-              name = item.select_one('.product__item__text h6').text.strip()
-              original_price = item.select_one('.product__item__text h5 s').text.strip()
-              discounted_price = item.select_one('.product__item__text h5').text.strip().split('<sup')[0].strip()
-              discount_percentage = item.select_one('.product__item__text h5 sup font').text.strip()
+          for item in soup.select("#mydivproduct .product__item"):
+              product_data = {}
 
-              products.append({
-                  'name': name,
-                  'originalPrice': original_price,
-                  'discountedPrice': discounted_price,
-                  'discountPercentage': discount_percentage
-              })
+              # Get image URL
+              img_tag = item.select_one(".product__item__pic.set-bg")
+              if img_tag and "data-setbg" in img_tag.attrs:
+                  product_data["image_url"] = img_tag["data-setbg"]
+              else:
+                  product_data["image_url"] = None
 
-          # Menyimpan data produk ke file JSON
-          with open('products.json', 'w') as f:
-              json.dump(products, f)
+              # Get product name
+              name_tag = item.select_one(".product__item__text h6")
+              product_data["name"] = name_tag.text.strip() if name_tag else None
 
-          print("Scraping selesai. Data disimpan ke products.json")
-        shell: python
+              # Get prices
+              price_tag = item.select_one(".product__item__text h5")
+              if price_tag:
+                  prices = price_tag.text.strip().split("\n")
+                  original_price = prices[1].replace("Rp.", "").replace(",", "").strip()
+                  discounted_price = prices[2].replace("Rp.", "").replace(",", "").strip()
+                  discount_percentage = prices[3].replace("<sup><font color=\"red\">", "").replace("</font></sup>", "").strip()
 
-      # Step 5: Commit and Push Changes
-      - name: Commit and Push Changes
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+                  product_data["original_price"] = int(original_price) if original_price.isdigit() else None
+                  product_data["discounted_price"] = int(discounted_price) if discounted_price.isdigit() else None
+                  product_data["discount_percentage"] = discount_percentage
+              else:
+                  product_data["original_price"] = None
+                  product_data["discounted_price"] = None
+                  product_data["discount_percentage"] = None
+
+              products.append(product_data)
+
+          # Save to jastip.json
+          with open("jastip.json", "w", encoding="utf-8") as f:
+              json.dump(products, f, ensure_ascii=False, indent=4)
+
+          print("Scraping completed and jastip.json updated")
+
+      - name: Commit and push changes
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .
-            git commit -m "Update products.json"
-            git push HEAD:main
-          else
-            echo "No changes to commit"
-          fi
-
-      # Optional: Debugging step to verify token
-      - name: Debug Token
-        run: echo "${{ secrets.GH_TOKEN }}"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add jastip.json
+          git commit -m "Update jastip.json with latest scraped data"
+          git push https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
