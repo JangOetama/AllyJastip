@@ -39,8 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
-            const description = `
-                ‼️ *Barang Lock & Lock ${product.name}*  \n
+            const description = `‼️ *Barang Lock & Lock ${product.name}*  \n
 *Harga Ally Jastip :* 
     ~Rp ${formatPrice(originalPrice)}~
     Rp ${formatPrice(jastipPrice)}\n
