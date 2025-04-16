@@ -44,5 +44,3 @@ jobs:
             echo "No changes to commit"
           fi
 
-      - name: Debug Token
-        run: echo "${{ secrets.GH_TOKEN }}"
