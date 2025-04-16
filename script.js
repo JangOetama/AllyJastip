@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadProducts = () => {
         Promise.all([
             fetch('products.json').then(response => response.json()),
-            fetch('https://github.com/JangOetama/AllyJastip/blob/main/description.json?raw=true').then(response => response.json())
+            fetch('description.json').then(response => response.json())
         ])
             .then(([products, descriptions]) => {
                 productData = products;
