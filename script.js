@@ -41,23 +41,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const description = `
                 ‼️ *Open PO Barang Lock N Lock ${product.name}*  \n
-            *Harga JKK :* 
-            ~Rp ${formatPrice(originalPrice)}~
-            Rp ${formatPrice(jastipPrice)}
-            *DP Rp ${formatPrice(dpJastipPrice)} /pcs*\n
-            *Skema Diskon :*
-            Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
-            Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
-            Min. ${min3} pcs : Rp ${formatPrice(jastipPrice3)} /pcs\n
-            *🌻 Deskripsi :*
-            ${product.description || 'Tidak ada deskripsi'}\n
-            \n
-            *🌱 Detail Order :*
-            * Close PO 17 April 25*
-            * Estimasi ready end Juni 25*\n\n
-            ====================
-            List : Nama + 4 Digit No WA
-            1. ...
+*Harga Ally Jastip :* 
+    ~Rp ${formatPrice(originalPrice)}~
+    Rp ${formatPrice(jastipPrice)}
+    *DP Rp ${formatPrice(dpJastipPrice)} /pcs*\n
+*Skema Diskon :*
+    Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
+    Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
+    Min. ${min3} pcs : Rp ${formatPrice(jastipPrice3)} /pcs\n
+*🌻 Deskripsi :*
+    ${product.description || 'Tidak ada deskripsi'}\n\n
+*🌱 Detail Order :*
+* Close PO 17 April 25*
+* Estimasi ready end Juni 25*\n\n
+====================
+List : Nama + 4 Digit No WA
+    1. ...
             `;
             const row = document.createElement('tr');
             row.innerHTML = `
