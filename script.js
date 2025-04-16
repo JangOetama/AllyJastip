@@ -72,13 +72,12 @@ ${pattern ? `${pattern}\n` : ''}`;
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice-jastipPrice)}!)_
 
 🎯 *Skema Diskon Menarik :*
-✅ Min. ${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs
-✅ Min. ${min2} pcs → Rp ${formatPrice(jastipPrice2)}/pcs
-✅ Min. ${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs
+✅ Min. *${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs*
+✅ Min. *${min2} pcs → Rp ${formatPrice(jastipPrice2)}/pcs*
+✅ Min. *${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs*
 
 📦 *Deskripsi Produk :*
-${descriptionText}
-📅 *Detail Order :*
+${descriptionText}📅 *Detail Order :*
 - Close PO: _17 April 2025_
 - Estimasi Ready: _Akhir Juni 2025_
 
