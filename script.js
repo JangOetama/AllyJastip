@@ -3,21 +3,23 @@ document.addEventListener('DOMContentLoaded', function () {
     let productData = [];
     let descriptionData = [];
 
+    // Load products from products.json
     const loadProducts = () => {
         fetch('products.json')
             .then(response => response.json())
             .then(data => {
                 productData = data;
-                return fetch('description.json');
+                return fetch('description.json'); // Load description.json
             })
             .then(response => response.json())
             .then(data => {
                 descriptionData = data;
-                renderTable(); 
+                renderTable(); // Render the table after both files are loaded
             })
             .catch(error => console.error('Error fetching data:', error));
     };
 
+    // Function to find description by itemCode (using product.name as the key)
     const getDescriptionByName = (productName) => {
         return descriptionData.find(desc => desc.itemCode === productName);
     };
@@ -49,10 +51,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
+            // Get description data based on product.name (matching with itemCode in description.json)
             const descriptionDetails = getDescriptionByName(product.name);
             let descriptionText = '';
 
             if (descriptionDetails) {
+                // Format capacity without decimals
                 const capacityML = descriptionDetails.capacityML
                     ? `${Math.round(parseFloat(descriptionDetails.capacityML))} ML`
                     : '';
@@ -68,6 +72,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 const color = descriptionDetails.itemColor ? `\nWarna: ${descriptionDetails.itemColor}` : '';
                 const pattern = descriptionDetails.itemPattern ? `\nPattern: ${descriptionDetails.itemPattern}` : '';
 
+                descriptionText = `
+*🌻 Deskripsi :*
+Kapasitas: ${capacityML}${capacityML && capacityL ? ' / ' : ''}${capacityL}
+Kategori: ${category}${color}${pattern}
+                `.trim();
+            } else {
+                descriptionText = '*Tidak ada deskripsi*';
+            }
+
             const description = `‼️ *Barang Lock & Lock ${product.name}*  \n
 *Harga Ally Jastip :* 
     ~Rp ${formatPrice(originalPrice)}~
@@ -76,10 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
     Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
     Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
     Min. ${min3} pcs : Rp ${formatPrice(jastipPrice3)} /pcs\n
-*🌻 Deskripsi :*
-    Kapasitas: ${capacityML}${capacityML && capacityL ? ' / ' : ''}${capacityL}
-    Kategori: ${category}${color}${pattern}
-
+${descriptionText}\n
 *🌱 Detail Order :*
 * Close PO 17 April 25*
 * Estimasi ready end Juni 25*\n\n
