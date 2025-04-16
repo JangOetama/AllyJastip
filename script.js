@@ -5,9 +5,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const tableBody = document.querySelector('#productTable tbody');
 
             productData.forEach(product => {
+                // Fungsi untuk mengonversi harga dari string ke angka
+                const parsePrice = (price) => {
+                    return parseFloat(price.replace(/,/g, '')); // Hapus koma dan konversi ke float
+                };
+
+                // Parsing data harga dari JSON
+                const originalPrice = parsePrice(product.originalPrice);
+                const discountedPrice = parsePrice(product.discountedPrice);
+                const discountPercentage = parseFloat(product.discountPercentage);
+
                 // Hitung harga setelah diskon jastip (10% dari harga awal)
                 const jastipDiscount = 10; // Jastip discount percentage
-                const baseDiscountedPrice = product.originalPrice * (1 - product.discountPercentage / 100);
+                const baseDiscountedPrice = originalPrice * (1 - discountPercentage / 100);
                 const jastipPrice = baseDiscountedPrice * (1 - jastipDiscount / 100);
 
                 // Hitung DP berdasarkan skema diskon
@@ -30,14 +40,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Deskripsi produk
                 const description = `
-                    ‼️ Open PO Barang Lock N Lock\n
-                    Harga JKK : ${formatPrice(product.originalPrice)}\n
+                    ‼️ Open PO Barang Lock N Lock \n
+                    Harga JKK : Rp ${formatPrice(originalPrice)}\n
                     DP Rp ${formatPrice(dp3)}/pcs (Min. 3 pcs)\n
                     DP Rp ${formatPrice(dp5)}/pcs (Min. 5 pcs)\n
                     DP Rp ${formatPrice(dp10)}/pcs (Min. 10 pcs)\n
                     \n
                     🌻 Deskripsi :\n
-                    ${product.description}\n
+                    ${product.description || 'Tidak ada deskripsi'}\n
                     \n
                     🌱 Detail Order :\n
                     * Close PO 17 April 25\n
@@ -49,9 +59,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.innerHTML = `
                     <td><img src="${product.image}" alt="${product.name}" style="width: 50px; height: auto;"></td>
                     <td>${product.name}</td>
-                    <td>Rp ${formatPrice(product.originalPrice)}</td>
+                    <td>Rp ${formatPrice(originalPrice)}</td>
                     <td>Rp ${formatPrice(jastipPrice)}</td>
-                    <td>${product.discountPercentage}%</td>
+                    <td>${discountPercentage}%</td>
                     <td style="white-space: pre-wrap;">${description}</td> <!-- Deskripsi -->
                 `;
                 tableBody.appendChild(row);
