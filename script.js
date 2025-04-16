@@ -95,8 +95,7 @@ ${descriptionText}📅 *Detail Order :*
 // Fungsi untuk membuat tautan WhatsApp
 const createWhatsAppLink = (description, imageUrl) => {
     const text = encodeURIComponent(description);
-    const image = encodeURIComponent(imageUrl); // Gambar akan ditambahkan sebagai URL
-    return `https://wa.me/?text=${text}%0A%0A*Gambar Produk:*%20![](${image})`;
+    return `https://wa.me/?text=${text}`;
 };
 
 // Modifikasi bagian pembuatan baris tabel
