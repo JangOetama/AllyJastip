@@ -1,40 +1,48 @@
-name: Run Scrape Script and Update products.json
+name: Scrape Products
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [main]
   schedule:
-    - cron: "0 0 * * *" # Jalankan setiap hari pada tengah malam (UTC)
-  workflow_dispatch: # Izinkan manual trigger
+    - cron: '0 0 * * *'  # Setiap hari pukul 00:00
 
 jobs:
-  run-scrape-script:
+  scrape:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
-      - name: Download scrape.py from repository
-        run: |
-          curl -o scrape.py https://raw.githubusercontent.com/JangOetama/AllyJastip/main/scrape.py
+      - name: Run Scrape Script
+        run: python scrape.py
 
-      - name: Run scrape.py to generate products.json
+      - name: Commit and Push Changes
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          python scrape.py
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Update products.json"
+            git push https://${{ secrets.GH_TOKEN }}@github.com/JangOetama/AllyJastip.git HEAD:main
+          else
+            echo "No changes to commit"
+          fi
 
-      - name: Commit and push updated products.json
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add products.json
-          git commit -m "Update products.json with latest scraped data" || echo "No changes to commit"
-          git push https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+      - name: Debug Token
+        run: echo "${{ secrets.GH_TOKEN }}"
