@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const description = `‼️ *Barang Lock & Lock ${product.name}*  \n
 *Harga Ally Jastip :* 
     ~Rp ${formatPrice(originalPrice)}~
-    Rp ${formatPrice(jastipPrice)}\n
+    *Rp ${formatPrice(jastipPrice)}*\n
 *Skema Diskon :*
     Min. ${min1} pcs : Rp ${formatPrice(jastipPrice1)} /pcs
     Min. ${min2} pcs : Rp ${formatPrice(jastipPrice2)} /pcs
