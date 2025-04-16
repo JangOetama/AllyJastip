@@ -92,20 +92,37 @@ ${descriptionText}📅 *Detail Order :*
 1. ...
             `;
 
-            // Membuat baris tabel
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><img src="${product.image}" alt="${product.name}" style="width: 50px; height: auto;"></td>
-                <td>${product.name}</td>
-                <td>Rp ${formatPrice(originalPrice)}</td>
-                <td>Rp ${formatPrice(baseDiscountedPrice)}</td>
-                <td>${discountPercentage}%</td>
-                <td style="white-space: pre-wrap;">${fullDescription}</td>
-            `;
-            tableBody.appendChild(row);
+// Fungsi untuk membuat tautan WhatsApp
+const createWhatsAppLink = (description, imageUrl) => {
+    const text = encodeURIComponent(description);
+    const image = encodeURIComponent(imageUrl); // Gambar akan ditambahkan sebagai URL
+    return `https://wa.me/?text=${text}%0A%0A*Gambar Produk:*%20![](${image})`;
+};
+
+// Modifikasi bagian pembuatan baris tabel
+const row = document.createElement('tr');
+row.innerHTML = `
+    <td><img src="${product.image}" alt="${product.name}" style="width: 50px; height: auto;"></td>
+    <td>${product.name}</td>
+    <td>Rp ${formatPrice(originalPrice)}</td>
+    <td>Rp ${formatPrice(baseDiscountedPrice)}</td>
+    <td>${discountPercentage}%</td>
+    <td style="white-space: pre-wrap;">
+        ${fullDescription}
+        <button 
+            class="share-btn" 
+            onclick="window.open('${createWhatsAppLink(fullDescription, product.image)}', '_blank');"
+        >
+            Share to WhatsApp
+        </button>
+    </td>
+`;
+tableBody.appendChild(row);
         });
     };
 
+
+    
     // Event listener untuk form submit
     document.getElementById('configForm').addEventListener('submit', function (event) {
         event.preventDefault();
