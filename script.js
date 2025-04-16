@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 * Estimasi ready end Juni 25*\n\n
 ====================
 List : Nama + 4 Digit No WA
-    1. ...
+1. ...
             `;
             const row = document.createElement('tr');
             row.innerHTML = `
