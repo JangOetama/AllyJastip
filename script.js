@@ -74,11 +74,30 @@ ${pattern ? `${pattern}\n` : ''}`
             // Menghasilkan deskripsi produk
             const { itemName, descriptionText } = generateDescription(description);
 
-            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  
+            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
+
+🎯 *Skema Diskon Menarik :*
+✅ Min. *${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs*
+✅ Min. *${min2} pcs → Rp ${formatPrice(jastipPrice2)}/pcs*
+✅ Min. *${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs*
+
 📦 *Deskripsi Produk :*
-${descriptionText}`;
+${descriptionText}📅 *Detail Order :*
+- Close PO: _17 April 2025_
+- Estimasi Ready: _Akhir Juni 2025_
+
+⚠️ *Catatan Penting :*
+- Pembelian minimal *1* pcs .
+- Barang dikirim sesuai urutan pembayaran.
+- Pastikan cek stok warna sebelum memesan!
+
+====================
+🛒 List Pemesanan :
+    Nama + 4 Digit Akhir No WA
+1. ...
+`;
 
             // Fungsi untuk membuat tautan WhatsApp
             const createWhatsAppLink = (description) => {
