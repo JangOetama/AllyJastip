@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const generateDescription = (desc) => {
         if (!desc) return 'Deskripsi tidak tersedia';
 
-        const itemName = desc.itemName ?? 'Nama Tidak Tersedia'; // Nilai default jika undefined
+        const itemName = desc.itemName ?? 'Nama Tidak Tersedia';
         const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
         const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
         const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
@@ -62,46 +62,26 @@ ${pattern ? `${pattern}\n` : ''}`
 
         const originalPrice = parseFloat(product.originalPrice.replace(/,/g, ''));
         const discountPercentage = parseFloat(product.discountPercentage);
-        const jastipDiscount = 10; // Diskon Jastip tetap 10%
+        const jastipDiscount = 10;
         const min1 = 3, min2 = 5, min3 = 10;
-
-        // Menghitung harga setelah diskon
-        const baseDiscountedPrice = originalPrice * (1 - discountPercentage / 100);
         const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
         const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
         const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
         const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
 
-        // Format harga
         const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
-        // Menghasilkan deskripsi produk
         const { itemName, descriptionText } = generateDescription(description);
 
-        const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  \n
+        const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
-
 🎯 *Skema Diskon Menarik :*
 ✅ Min. *${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs*
 ✅ Min. *${min2} pcs → Rp ${formatPrice(jastipPrice2)}/pcs*
 ✅ Min. *${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs*
-
 📦 *Deskripsi Produk :*
-${descriptionText}📅 *Detail Order :*
-- Close PO: _17 April 2025_
-- Estimasi Ready: _Akhir Juni 2025_
-
-⚠️ *Catatan Penting :*
-- Pembelian minimal *1* pcs .
-- Barang dikirim sesuai urutan pembayaran.
-- Pastikan cek stok warna sebelum memesan!
-
-====================
-🛒 List Pemesanan :
-    Nama + 4 Digit Akhir No WA
-1. ...
-`;
+${descriptionText}`;
 
         // Update Open Graph Meta Tags
         document.getElementById('ogTitle').setAttribute('content', `JASTIP LOCK & LOCK ${product.name} ${itemName}`);
@@ -111,12 +91,43 @@ ${descriptionText}📅 *Detail Order :*
 
         // Menampilkan detail produk
         productDetail.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="watermarked">
-            <h2>${product.name}</h2>
-            <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
-            <p style="white-space: pre-wrap;">${fullDescription}</p>
-            <a href="https://wa.me/?text=${encodeURIComponent(fullDescription)}" class="chat-admin">Chat Admin</a>
+            <img src="${product.image}" alt="${product.name}">
+            <div class="content">
+                <h1>${product.name}</h1>
+                <p class="price">Rp ${formatPrice(jastipPrice)} 
+                    <span class="original-price">Rp ${formatPrice(originalPrice)}</span>
+                </p>
+                <p class="description">${fullDescription}</p>
+                <div class="cta-buttons">
+                    <button class="share-btn" onclick="window.open('${createWhatsAppLink(fullDescription)}', '_blank');">
+                        Share to WhatsApp
+                    </button>
+                    <button class="download-btn" onclick="downloadImage('${product.image}', '${product.name}.jpg')">
+                        Download Gambar
+                    </button>
+                </div>
+            </div>
         `;
+    };
+
+    // Fungsi untuk membuat tautan WhatsApp
+    const createWhatsAppLink = (description) => {
+        const text = encodeURIComponent(description);
+        return `https://wa.me/?text=${text}`;
+    };
+
+    // Fungsi untuk mengunduh gambar
+    window.downloadImage = (url, filename) => {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+                URL.revokeObjectURL(link.href);
+            })
+            .catch(error => console.error('Error downloading image:', error));
     };
 
     // Memuat data saat halaman dimuat
