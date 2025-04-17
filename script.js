@@ -136,17 +136,27 @@ productGrid.appendChild(productCard);
     };
 
     // Fungsi untuk mengunduh gambar
-    window.downloadImage = (url, filename) => {
-        fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = filename;
-                link.click();
-            })
-            .catch(error => console.error('Error downloading image:', error));
-    };
+window.downloadImage = (url, filename) => {
+    const proxiedUrl = `https://cors-anywhere.herokuapp.com/${url}`; // Tambahkan proxy
+    console.log('Downloading image from:', proxiedUrl);
+    console.log('Filename:', filename);
+
+    fetch(proxiedUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error fetching image: ${response.status}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href); // Bersihkan URL setelah digunakan
+        })
+        .catch(error => console.error('Error downloading image:', error));
+};
 
     // Fungsi filter produk berdasarkan kategori
     window.filterProducts = (category) => {
