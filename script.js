@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const productCard = document.createElement('div');
             productCard.classList.add('product-card');
             productCard.innerHTML = `
-                <a href="/AllyJastip/${product.name}">
+                <a href="/AllyJastip/detail.html?item=${product.name}">
                     <img src="${product.image}" alt="${product.name}">
                     <h3>${product.name}</h3>
                     <p><s>Rp ${originalPrice.toLocaleString()}</s> Rp ${discountedPrice.toLocaleString()}</p>
