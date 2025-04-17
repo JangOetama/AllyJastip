@@ -3,33 +3,62 @@ body {
     margin: 20px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+header {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-.share-btn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 16px;
-    background-color: #25D366; /* Warna hijau WhatsApp */
+#categoryFilter button {
+    margin: 5px;
+    padding: 10px;
+    background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
 }
 
-.share-btn:hover {
-    background-color: #128C7E; /* Warna hijau lebih gelap saat hover */
+#categoryFilter button:hover {
+    background-color: #0056b3;
+}
+
+#productGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.product-card img {
+    max-width: 100%;
+    height: auto;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+/* Halaman Detail */
+#productDetail {
+    text-align: center;
+}
+
+.watermarked {
+    position: relative;
+}
+
+.watermarked::after {
+    content: 'Ally Jastip';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    font-size: 14px;
 }
