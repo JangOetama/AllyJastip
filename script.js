@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const tableBody = document.querySelector('#productTable tbody');
+    const productGrid = document.getElementById('productGrid');
+    const categoryFilter = document.getElementById('categoryFilter');
     let productData = [];
     let descriptionData = [];
 
-    // Fungsi untuk memuat data produk dan deskripsi
+    // Memuat data produk dan deskripsi
     const loadProducts = () => {
         Promise.all([
             fetch('products.json').then(response => response.json()),
@@ -12,118 +13,121 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(([products, descriptions]) => {
                 productData = products;
                 descriptionData = descriptions;
-                renderTable();
+                renderCategories();
+                renderProducts();
             })
             .catch(error => console.error('Error fetching data:', error));
     };
 
-    // Fungsi untuk merender tabel
-    const renderTable = () => {
-        const jastipDiscount = parseFloat(document.getElementById('jastipDiscount').value) || 0;
-        const min1 = parseInt(document.getElementById('min1').value) || 3;
-        const min2 = parseInt(document.getElementById('min2').value) || 5;
-        const min3 = parseInt(document.getElementById('min3').value) || 10;
-        const dpPercentage = parseFloat(document.getElementById('dpPercentage').value) || 50;
+    // Render filter kategori
+    const renderCategories = () => {
+        const categories = ['All', ...new Set(descriptionData.map(desc => desc.categoryType))];
+        categoryFilter.innerHTML = `
+            ${categories.map(category => `<button onclick="filterProducts('${category}')">${category}</button>`).join('')}
+        `;
+    };
 
-        tableBody.innerHTML = '';
+    // Fungsi untuk menghasilkan deskripsi produk
+    const generateDescription = (desc) => {
+        if (!desc) return 'Deskripsi tidak tersedia';
 
-        productData.forEach(product => {
-            // Mencari deskripsi yang sesuai berdasarkan itemCode
+        const itemName = desc.itemName ?? 'Nama Tidak Tersedia'; // Nilai default jika undefined
+        const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
+        const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
+        const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
+        const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
+        const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
+
+        return {
+            itemName,
+            descriptionText: `- *Nama Item :* ${desc.itemNamebyHC ?? itemName}
+- *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
+- *Kategori :* ${category}
+${color ? `${color}\n` : ''}
+${pattern ? `${pattern}\n` : ''}`
+        };
+    };
+
+    // Render produk dalam grid
+    const renderProducts = (category = 'All') => {
+        productGrid.innerHTML = '';
+        const filteredProducts = category === 'All'
+            ? productData
+            : productData.filter(product => {
+                const desc = descriptionData.find(desc => desc.itemCode === product.name);
+                return desc && desc.categoryType === category;
+            });
+
+        filteredProducts.forEach(product => {
             const description = descriptionData.find(desc => desc.itemCode === product.name);
 
             // Parsing harga
             const parsePrice = (price) => parseFloat(price.replace(/,/g, ''));
             const originalPrice = parsePrice(product.originalPrice);
             const discountPercentage = parseFloat(product.discountPercentage);
-
-            // Menghitung harga setelah diskon
-            const baseDiscountedPrice = originalPrice * (1 - discountPercentage / 100);
+            const jastipDiscount = 10; // Diskon Jastip tetap 10%
             const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
-            const dpJastipPrice = jastipPrice * (1 - dpPercentage / 100);
-            const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
-            const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
-            const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
 
             // Format harga
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
-            // Membuat deskripsi baru berdasarkan description.json
-            const generateDescription = (desc) => {
-                if (!desc) return 'Deskripsi tidak tersedia';
-
-                const generatedItemName = desc.itemName ?? 'Nama Tidak Tersedia'; // Ubah nama variabel
-                const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
-                const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
-                const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
-                const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
-                const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
-
-                return {
-                    itemName: generatedItemName, // Tetap gunakan nama yang sama untuk konsistensi
-                    descriptionText: `- *Nama Item :* ${desc.itemNamebyHC ?? generatedItemName}
-- *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
-- *Kategori :* ${category}
-${color ? `${color}\n` : ''}
-${pattern ? `${pattern}\n` : ''}`
-                };
-            };
-
+            // Menghasilkan deskripsi produk
             const { itemName, descriptionText } = generateDescription(description);
 
             const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
-🎯 *Skema Diskon Menarik :*
-✅ Min. *${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs*
-✅ Min. *${min2} pcs → Rp ${formatPrice(jastipPrice2)}/pcs*
-✅ Min. *${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs*
 📦 *Deskripsi Produk :*
-${descriptionText}📅 *Detail Order :*
-- Close PO: _17 April 2025_
-- Estimasi Ready: _Akhir Juni 2025_
-⚠️ *Catatan Penting :*
-- Pembelian minimal *1* pcs .
-- Barang dikirim sesuai urutan pembayaran.
-- Pastikan cek stok warna sebelum memesan!
-====================
-🛒 List Pemesanan :
-    Nama + 4 Digit Akhir No WA
-1. ...
-`;
+${descriptionText}`;
 
             // Fungsi untuk membuat tautan WhatsApp
-            const createWhatsAppLink = (description, imageUrl) => {
+            const createWhatsAppLink = (description) => {
                 const text = encodeURIComponent(description);
                 return `https://wa.me/?text=${text}`;
             };
 
-            // Modifikasi bagian pembuatan baris tabel
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><img src="${product.image}" alt="${product.name}" style="width: 50px; height: auto;"></td>
-                <td>${product.name}</td>
-                <td>Rp ${formatPrice(originalPrice)}</td>
-                <td>Rp ${formatPrice(baseDiscountedPrice)}</td>
-                <td>${discountPercentage}%</td>
-                <td style="white-space: pre-wrap;">
-                    ${fullDescription}
+            const productCard = document.createElement('div');
+            productCard.classList.add('product-card');
+            productCard.innerHTML = `
+                <img src="${product.image}" alt="${itemName}">
+                <h3>${itemName}</h3>
+                <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
+                <div class="product-actions">
                     <button 
                         class="share-btn" 
-                        onclick="window.open('${createWhatsAppLink(fullDescription, product.image)}', '_blank');"
+                        onclick="window.open('${createWhatsAppLink(fullDescription)}', '_blank');"
                     >
                         Share to WhatsApp
                     </button>
-                </td>
+                    <button 
+                        class="download-btn" 
+                        onclick="downloadImage('${product.image}', '${product.name}.jpg')"
+                    >
+                        Download Gambar
+                    </button>
+                </div>
             `;
-            tableBody.appendChild(row);
+            productGrid.appendChild(productCard);
         });
     };
 
-    // Event listener untuk form submit
-    document.getElementById('configForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        renderTable();
-    });
+    // Fungsi untuk mengunduh gambar
+    window.downloadImage = (url, filename) => {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+            })
+            .catch(error => console.error('Error downloading image:', error));
+    };
+
+    // Fungsi filter produk berdasarkan kategori
+    window.filterProducts = (category) => {
+        renderProducts(category);
+    };
 
     // Memuat data saat halaman dimuat
     loadProducts();
