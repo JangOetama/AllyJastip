@@ -51,70 +51,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
             // Gunakan itemName dari description.json
-            const itemName = description?.itemName ?? 'Nama Tidak Tersedia';
-
-            // Fungsi untuk membuat tautan WhatsApp
-            const createWhatsAppLink = (description, imageUrl) => {
-                const text = encodeURIComponent(description);
-                return `https://wa.me/?text=${text}`;
-            };
-
-            // Membuat deskripsi baru berdasarkan description.json
-            const generateDescription = (desc) => {
-                if (!desc) return 'Deskripsi tidak tersedia';
-                const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
-                const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
-                const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
-                const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
-                const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
-                return {
-                    itemName: desc.itemName ?? 'Nama Tidak Tersedia',
-                    descriptionText: `- *Nama Item :* ${desc.itemNamebyHC ?? desc.itemName}
-- *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
-- *Kategori :* ${category}
-${color ? `${color}\n` : ''}
-${pattern ? `${pattern}\n` : ''}`
-                };
-            };
-
-            const { itemName, descriptionText } = generateDescription(description);
-
-            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  
-🔥 *Harga Spesial Ally Jastip :*
-    ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
-📦 *Deskripsi Produk :*
-${descriptionText}`;
-
-            // Tombol Download Gambar
-            const downloadImage = (url, name) => {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = name || 'image.jpg';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
+            const itemName = description?.itemName ?? product.name;
 
             const productCard = document.createElement('div');
             productCard.classList.add('product-card');
             productCard.innerHTML = `
-                <img src="${product.image}" alt="${itemName}">
-                <h3>${itemName}</h3>
-                <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
-                <div class="product-actions">
-                    <button 
-                        class="share-btn" 
-                        onclick="window.open('${createWhatsAppLink(fullDescription, product.image)}', '_blank');"
-                    >
-                        Share to WhatsApp
-                    </button>
-                    <button 
-                        class="download-btn" 
-                        onclick="downloadImage('${product.image}', '${product.name}.jpg')"
-                    >
-                        Download Gambar
-                    </button>
-                </div>
+                <a href="/AllyJastip/detail.html?item=${product.name}">
+                    <img src="${product.image}" alt="${itemName}">
+                    <h3>${itemName}</h3>
+                    <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
+                </a>
             `;
             productGrid.appendChild(productCard);
         });
