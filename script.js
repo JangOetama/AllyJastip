@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Format harga
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
-
+            const nameItem = ``;
             // Membuat deskripsi baru berdasarkan description.json
             const generateDescription = (desc) => {
                 if (!desc) return 'Deskripsi tidak tersedia';
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
                 const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
                 const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
-
+                nameItem = desc.itemName;
                 return `- *Nama Item :* ${desc.itemNamebyHC}
 - *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
 - *Kategori :* ${category}
@@ -67,7 +67,7 @@ ${pattern ? `${pattern}\n` : ''}`;
 
             const descriptionText = generateDescription(description);
 
-            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${desc.itemName}]* 🌟  \n
+            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${nameItem}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice-jastipPrice)}!)_
 
