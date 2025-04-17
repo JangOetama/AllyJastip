@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
                 const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
 
-                return `- *Nama Item :* ${desc.itemNamebyHC || desc.itemName}
+                return `- *Nama Item :* ${desc.itemNamebyHC}
 - *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
 - *Kategori :* ${category}
 ${color ? `${color}\n` : ''}
@@ -67,7 +67,7 @@ ${pattern ? `${pattern}\n` : ''}`;
 
             const descriptionText = generateDescription(description);
 
-            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name}]* 🌟  \n
+            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${desc.itemName}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice-jastipPrice)}!)_
 
