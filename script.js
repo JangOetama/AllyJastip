@@ -39,16 +39,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
         filteredProducts.forEach(product => {
             const description = descriptionData.find(desc => desc.itemCode === product.name);
-            const originalPrice = parseFloat(product.originalPrice.replace(/,/g, ''));
-            const discountedPrice = parseFloat(product.discountedPrice.replace(/,/g, ''));
+
+            // Parsing harga
+            const parsePrice = (price) => parseFloat(price.replace(/,/g, ''));
+            const originalPrice = parsePrice(product.originalPrice);
+            const discountPercentage = parseFloat(product.discountPercentage);
+            const jastipDiscount = 10; // Diskon Jastip tetap 10%
+            const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
+
+            // Format harga
+            const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
+
+            // Gunakan itemName dari description.json
+            const itemName = description?.itemName ?? product.name;
 
             const productCard = document.createElement('div');
             productCard.classList.add('product-card');
             productCard.innerHTML = `
                 <a href="/AllyJastip/detail.html?item=${product.name}">
-                    <img src="${product.image}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <p><s>Rp ${originalPrice.toLocaleString()}</s> Rp ${discountedPrice.toLocaleString()}</p>
+                    <img src="${product.image}" alt="${itemName}">
+                    <h3>${itemName}</h3>
+                    <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
                 </a>
             `;
             productGrid.appendChild(productCard);
