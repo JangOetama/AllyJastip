@@ -7,8 +7,10 @@
 
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    line-height: 1.6;
     background-color: #f9f9f9;
+    color: #333;
+    padding: 20px;
 }
 
 header {
@@ -16,116 +18,105 @@ header {
     margin-bottom: 20px;
 }
 
-#categoryFilter {
+header a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.product-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-detail img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.product-detail .content {
+    padding: 20px;
+}
+
+.product-detail h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.product-detail .price {
+    font-size: 20px;
+    color: #e74c3c;
+    margin-bottom: 15px;
+}
+
+.product-detail .original-price {
+    text-decoration: line-through;
+    color: #aaa;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.product-detail .description {
+    margin-bottom: 20px;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.product-detail .cta-buttons {
     display: flex;
-    justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
 }
 
-#categoryFilter button {
+.cta-buttons button {
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
-
-#categoryFilter button:hover {
-    background-color: #0056b3;
-}
-
-#productGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.product-card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.product-card img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-}
-
-.product-card h3 {
-    margin: 10px 0;
     font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
-.product-card p {
-    margin: 10px 0;
-    font-size: 14px;
-}
-
-.product-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-}
-
-.share-btn, .download-btn {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.share-btn {
+.cta-buttons .share-btn {
     background-color: #25D366; /* Warna hijau WhatsApp */
     color: white;
 }
 
-.download-btn {
-    background-color: #007bff;
+.cta-buttons .download-btn {
+    background-color: #007bff; /* Warna biru */
     color: white;
 }
 
-.share-btn:hover {
-    background-color: #128C7E; /* Warna hijau lebih gelap saat hover */
+.cta-buttons button:hover {
+    transform: scale(1.05);
 }
 
-.download-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Responsiveness */
 @media (max-width: 768px) {
-    #productGrid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    .product-detail {
+        padding: 10px;
     }
 
-    .product-card h3 {
+    .product-detail h1 {
+        font-size: 20px;
+    }
+
+    .product-detail .price {
+        font-size: 18px;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+    }
+
+    .cta-buttons button {
+        width: 100%;
+        padding: 12px;
         font-size: 14px;
-    }
-
-    .product-card p {
-        font-size: 12px;
-    }
-
-    .product-actions {
-        flex-direction: row;
-        gap: 5px;
-    }
-
-    .share-btn, .download-btn {
-        padding: 8px;
-        font-size: 12px;
     }
 }
