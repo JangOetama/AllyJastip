@@ -103,6 +103,12 @@ ${descriptionText}📅 *Detail Order :*
 1. ...
 `;
 
+        // Update Open Graph Meta Tags
+        document.getElementById('ogTitle').setAttribute('content', `JASTIP LOCK & LOCK ${product.name} ${itemName}`);
+        document.getElementById('ogDescription').setAttribute('content', fullDescription);
+        document.getElementById('ogImage').setAttribute('content', product.image);
+        document.getElementById('ogUrl').setAttribute('content', window.location.href);
+
         // Menampilkan detail produk
         productDetail.innerHTML = `
             <img src="${product.image}" alt="${product.name}" class="watermarked">
