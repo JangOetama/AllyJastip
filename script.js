@@ -67,7 +67,10 @@ ${pattern ? `${pattern}\n` : ''}`
             const discountPercentage = parseFloat(product.discountPercentage);
             const jastipDiscount = 10; // Diskon Jastip tetap 10%
             const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
-
+            const min1 = 3, min2 = 5, min3 = 10;
+            const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
+            const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
+            const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
             // Format harga
             const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
