@@ -1,6 +1,14 @@
+/* Reset styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    background-color: #f9f9f9;
 }
 
 header {
@@ -8,12 +16,19 @@ header {
     margin-bottom: 20px;
 }
 
+#categoryFilter {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 #categoryFilter button {
-    margin: 5px;
-    padding: 10px;
+    padding: 10px 20px;
     background-color: #007bff;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -28,37 +43,89 @@ header {
 }
 
 .product-card {
+    background-color: white;
     border: 1px solid #ddd;
-    padding: 10px;
+    border-radius: 8px;
+    overflow: hidden;
     text-align: center;
-    transition: transform 0.2s;
-}
-
-.product-card img {
-    max-width: 100%;
-    height: auto;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .product-card:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Halaman Detail */
-#productDetail {
-    text-align: center;
+.product-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
-.watermarked {
-    position: relative;
+.product-card h3 {
+    margin: 10px 0;
+    font-size: 16px;
 }
 
-.watermarked::after {
-    content: 'Ally Jastip';
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    color: white;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 5px;
+.product-card p {
+    margin: 10px 0;
     font-size: 14px;
+}
+
+.product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.share-btn, .download-btn {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.share-btn {
+    background-color: #25D366; /* Warna hijau WhatsApp */
+    color: white;
+}
+
+.download-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.share-btn:hover {
+    background-color: #128C7E; /* Warna hijau lebih gelap saat hover */
+}
+
+.download-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    #productGrid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .product-card h3 {
+        font-size: 14px;
+    }
+
+    .product-card p {
+        font-size: 12px;
+    }
+
+    .product-actions {
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    .share-btn, .download-btn {
+        padding: 8px;
+        font-size: 12px;
+    }
 }
