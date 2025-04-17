@@ -109,27 +109,29 @@ ${descriptionText}📅 *Detail Order :*
             };
 
             const productCard = document.createElement('div');
-            productCard.classList.add('product-card');
-            productCard.innerHTML = `
-                <img src="${product.image}" alt="${itemName}">
-                <h3>${itemName}</h3>
-                <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
-                <div class="product-actions">
-                    <button 
-                        class="share-btn" 
-                        onclick="window.open('${createWhatsAppLink(fullDescription)}', '_blank');"
-                    >
-                        Share to WhatsApp
-                    </button>
-                    <button 
-                        class="download-btn" 
-                        onclick="downloadImage('${product.image}', '${product.name}.jpg')"
-                    >
-                        Download Gambar
-                    </button>
-                </div>
-            `;
-            productGrid.appendChild(productCard);
+productCard.classList.add('product-card');
+productCard.innerHTML = `
+    <a href="/AllyJastip/detail.html?item=${product.name}">
+        <img src="${product.image}" alt="${itemName}">
+        <h3>${itemName}</h3>
+    </a>
+    <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
+    <div class="product-actions">
+        <button 
+            class="share-btn" 
+            onclick="window.open('${createWhatsAppLink(fullDescription)}', '_blank');"
+        >
+            Share to WhatsApp
+        </button>
+        <button 
+            class="download-btn" 
+            onclick="downloadImage('${product.image}', '${product.name}.jpg')"
+        >
+            Download Gambar
+        </button>
+    </div>
+`;
+productGrid.appendChild(productCard);
         });
     };
 
