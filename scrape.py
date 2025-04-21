@@ -2,15 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
-from difflib import SequenceMatcher
 
-# Fungsi untuk membandingkan kesamaan dua string
-def is_similar(name1, name2):
-    # Menggunakan SequenceMatcher untuk mengecek kemiripan nama
-    similarity = SequenceMatcher(None, name1, name2).ratio()
-    return similarity > 0.8  # Threshold kemiripan (misalnya 80%)
+def is_similar_name(name1, name2):
+    # Cocokkan bagian awal nama (minimal 3 karakter pertama harus sama)
+    pattern = re.compile(r'^' + re.escape(name1[:3]))
+    return bool(pattern.match(name2))
 
-# URL dan data login
+# URL login dan data login
 login_url = 'https://feelbuyshop.com/preorderjastip/?f=login'
 login_data = {
     'username': '085161117349',
@@ -19,19 +17,16 @@ login_data = {
 
 product_url = 'https://feelbuyshop.com/preorderjastip/?f=home'
 
-# Membuat sesi
 session = requests.Session()
 
-# Login
+# Login ke situs
 response = session.post(login_url, data=login_data)
 
-# Mendapatkan halaman produk
+# Ambil halaman produk
 product_page = session.get(product_url)
 
-# Parsing HTML
 soup = BeautifulSoup(product_page.content, 'html.parser')
 
-# List untuk menyimpan produk
 products = []
 for item in soup.select('#mydivproduct .product__item'):
     name = item.select_one('.product__item__text h6').text.strip()
@@ -57,33 +52,33 @@ for item in soup.select('#mydivproduct .product__item'):
         'discountPercentage': "{}%".format(discount_percentage)
     })
 
-# Pengelompokan produk
+# Mengelompokkan produk berdasarkan kriteria
 products = []
 for product in products:
-    # Cari apakah ada grup yang sudah ada yang cocok
-    matched_group = None
+    # Cari apakah produk ini bisa dimasukkan ke grup yang sudah ada
+    added_to_group = False
     for group in products:
-        # Membandingkan harga dan nama
-        if (group['originalPrice'][0] == product['originalPrice'] and
-            is_similar(group['name'][0], product['name'])):
-            matched_group = group
+        # Periksa apakah produk ini mirip dengan salah satu nama dalam grup
+        if (
+            group['originalPrice'] == product['originalPrice'] and
+            group['discountedPrice'] == product['discountedPrice'] and
+            group['discountPercentage'] == product['discountPercentage'] and
+            any(is_similar_name(product['name'], existing_name) for existing_name in group['name'])
+        ):
+            # Tambahkan produk ke grup yang ada
+            group['name'].append(product['name'])
+            group['image'].append(product['image'])
+            added_to_group = True
             break
 
-    if matched_group:
-        # Jika ada grup yang cocok, tambahkan ke grup tersebut
-        matched_group['name'].append(product['name'])
-        matched_group['image'].append(product['image'])
-        matched_group['originalPrice'].append(product['originalPrice'])
-        matched_group['discountedPrice'].append(product['discountedPrice'])
-        matched_group['discountPercentage'].append(product['discountPercentage'])
-    else:
-        # Jika tidak ada grup yang cocok, buat grup baru
+    if not added_to_group:
+        # Buat grup baru jika tidak ada yang cocok
         products.append({
             'name': [product['name']],
             'image': [product['image']],
-            'originalPrice': [product['originalPrice']],
-            'discountedPrice': [product['discountedPrice']],
-            'discountPercentage': [product['discountPercentage']]
+            'originalPrice': product['originalPrice'],
+            'discountedPrice': product['discountedPrice'],
+            'discountPercentage': product['discountPercentage']
         })
 
 # Simpan hasil ke file JSON
