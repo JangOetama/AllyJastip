@@ -48,36 +48,66 @@ ${pattern ? `${pattern}\n` : ''}`
         };
     };
 
-    // Render produk dalam grid
-    const renderProducts = (category = 'All') => {
-        productGrid.innerHTML = '';
-        const filteredProducts = category === 'All'
-            ? productData
-            : productData.filter(product => {
-                const desc = descriptionData.find(desc => desc.itemCode === product.name);
-                return desc && desc.categoryType === category;
-            });
+// Fungsi untuk menghitung tanggal Close PO dan Estimasi Ready
+const calculateDates = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 (Minggu) - 6 (Sabtu)
+    const date = today.getDate();
+    const month = today.getMonth();
+    const year = today.getFullYear();
 
-        filteredProducts.forEach(product => {
-            const description = descriptionData.find(desc => desc.itemCode === product.name);
+    // Hitung hari Senin minggu depan
+    const daysUntilNextMonday = (8 - dayOfWeek) % 7;
+    const closePODate = new Date(year, month, date + daysUntilNextMonday);
 
-            // Parsing harga
-            const parsePrice = (price) => parseFloat(price.replace(/,/g, ''));
-            const originalPrice = parsePrice(product.originalPrice);
-            const discountPercentage = parseFloat(product.discountPercentage);
-            const jastipDiscount = 10; // Diskon Jastip tetap 10%
-            const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
-            const min1 = 3, min2 = 5, min3 = 10;
-            const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
-            const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
-            const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
-            // Format harga
-            const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
+    // Estimasi ready: Tidak ada tanggal pasti, hanya pesan default
+    const estimasiReadyMessage = "Maksimal 1 minggu setelah pembayaran";
 
-            // Menghasilkan deskripsi produk
-            const { itemName, descriptionText } = generateDescription(description);
+    return {
+        closePO: formatDate(closePODate),
+        estimasiReady: estimasiReadyMessage,
+    };
+};
 
-            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  \n
+// Fungsi untuk memformat tanggal menjadi "dd MMMM yyyy"
+const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('id-ID', options);
+};
+
+// Render produk dalam grid
+const renderProducts = (category = 'All') => {
+    productGrid.innerHTML = '';
+    const filteredProducts = category === 'All'
+        ? productData
+        : productData.filter(product => {
+            const desc = descriptionData.find(desc => desc.itemCode === product.name);
+            return desc && desc.categoryType === category;
+        });
+
+    // Hitung tanggal Close PO dan Estimasi Ready
+    const { closePO, estimasiReady } = calculateDates();
+
+    filteredProducts.forEach(product => {
+        const description = descriptionData.find(desc => desc.itemCode === product.name);
+
+        // Parsing harga
+        const parsePrice = (price) => parseFloat(price.replace(/,/g, ''));
+        const originalPrice = parsePrice(product.originalPrice);
+        const discountPercentage = parseFloat(product.discountPercentage);
+        const jastipDiscount = 10; // Diskon Jastip tetap 10%
+        const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
+        const min1 = 3, min2 = 5, min3 = 10;
+        const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
+        const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
+        const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
+        // Format harga
+        const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
+
+        // Menghasilkan deskripsi produk
+        const { itemName, descriptionText } = generateDescription(description);
+
+        const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name} ${itemName}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
 
@@ -87,9 +117,10 @@ ${pattern ? `${pattern}\n` : ''}`
 ✅ Min. *${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs*
 
 📦 *Deskripsi Produk :*
-${descriptionText}📅 *Detail Order :*
-- Close PO: _17 April 2025_
-- Estimasi Ready: _Akhir Juni 2025_
+${descriptionText}
+📅 *Detail Order :*
+- Close PO: _${closePO}_
+- Estimasi Ready: _${estimasiReady}_
 
 ⚠️ *Catatan Penting :*
 - Pembelian minimal *1* pcs .
@@ -102,15 +133,15 @@ ${descriptionText}📅 *Detail Order :*
 1. ...
 `;
 
-            // Fungsi untuk membuat tautan WhatsApp
-            const createWhatsAppLink = (description) => {
-                const text = encodeURIComponent(description);
-                return `https://wa.me/?text=${text}`;
-            };
+        // Fungsi untuk membuat tautan WhatsApp
+        const createWhatsAppLink = (description) => {
+            const text = encodeURIComponent(description);
+            return `https://wa.me/?text=${text}`;
+        };
 
-            const productCard = document.createElement('div');
-productCard.classList.add('product-card');
-productCard.innerHTML = `
+        const productCard = document.createElement('div');
+        productCard.classList.add('product-card');
+        productCard.innerHTML = `
     <a href="/AllyJastip/detail.html?item=${product.name}">
         <img src="${product.image}" alt="${itemName}">
         <h3>${itemName}</h3>
@@ -131,9 +162,9 @@ productCard.innerHTML = `
         </button>
     </div>
 `;
-productGrid.appendChild(productCard);
-        });
-    };
+        productGrid.appendChild(productCard);
+    });
+};
 
     // Fungsi untuk mengunduh gambar
 window.downloadImage = (url, filename) => {
