@@ -57,7 +57,15 @@ const calculateDates = () => {
     const year = today.getFullYear();
 
     // Hitung hari Senin minggu depan
-    const daysUntilNextMonday = (8 - dayOfWeek) % 7;
+    let daysUntilNextMonday;
+    if (dayOfWeek === 1) {
+        // Jika hari ini adalah hari Senin, tambahkan 7 hari untuk mendapatkan Senin minggu depan
+        daysUntilNextMonday = 7;
+    } else {
+        // Untuk hari lain, hitung berapa hari lagi sampai hari Senin minggu depan
+        daysUntilNextMonday = (8 - dayOfWeek) % 7;
+    }
+
     const closePODate = new Date(year, month, date + daysUntilNextMonday);
 
     // Estimasi ready: Tidak ada tanggal pasti, hanya pesan default
