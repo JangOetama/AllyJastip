@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Memuat data produk dan deskripsi
     const loadProducts = () => {
         Promise.all([
-            fetch('group_products.json').then(response => response.json()), // Menggunakan group_products.json
+            fetch('grouped_products.json').then(response => response.json()), // Menggunakan group_products.json
             fetch('description.json').then(response => response.json())
         ])
             .then(([products, descriptions]) => {
