@@ -57,7 +57,8 @@ const generateDescription = (desc, product) => {
 
     return {
         itemName: itemName,
-        descriptionText: `- *Nama Item :* ${itemNameList.join(', ')}
+        descriptionText: `- *Nama Item :* 
+    ${itemNameList.join('\r\n    ')}
 - *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
 - *Kategori :* ${category}
 ${colorList ? `${colorList}\n` : ''}
