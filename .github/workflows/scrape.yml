@@ -27,13 +27,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
-      - name: Remove Existing products.json (if exists)
+      - name: Remove Existing grouped_products.json (if exists)
         run: |
-          if [ -f "products.json" ]; then
-            echo "Removing existing products.json..."
+          if [ -f "grouped_products.json" ]; then
+            echo "Removing existing grouped_products.json..."
             rm products.json
           else
-            echo "No existing products.json found."
+            echo "No existing grouped_products.json found."
           fi
 
       - name: Run Scrape Script
@@ -50,7 +50,7 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             echo "Changes detected. Committing and pushing changes..."
             git add .
-            git commit -m "Update products.json"
+            git commit -m "Update grouped_products.json"
             git push https://${{ secrets.GH_TOKEN }}@github.com/JangOetama/AllyJastip.git HEAD:main
           else
             echo "No changes to commit."
