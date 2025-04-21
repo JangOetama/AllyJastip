@@ -27,27 +27,43 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     };
 
-    // Fungsi untuk menghasilkan deskripsi produk
-    const generateDescription = (desc) => {
-        if (!desc) return 'Deskripsi tidak tersedia';
+// Fungsi untuk menghasilkan deskripsi produk
+const generateDescription = (desc, product) => {
+    if (!desc) return 'Deskripsi tidak tersedia';
 
-        const itemName = desc.itemName ?? 'Nama Tidak Tersedia'; // Nilai default jika undefined
-        const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
-        const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
-        const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
-        const color = desc.itemColor ? `- *Warna :* ${desc.itemColor}` : '';
-        const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
+    // Mengambil data dari description.json
+    const itemName = desc.itemName ?? 'Nama Tidak Tersedia'; // Nilai default jika undefined
+    const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
+    const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
+    const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
 
-        return {
-            itemName,
-            descriptionText: `- *Nama Item :* ${desc.itemNamebyHC ?? itemName}
+    // Mengambil warna dari semua deskripsi yang sesuai dengan grup produk
+    const colors = product.name
+        .map(name => {
+            const descForName = descriptionData.find(d => d.itemCode === name);
+            return descForName?.itemColor;
+        })
+        .filter(Boolean); // Hanya ambil warna yang ada
+    const colorList = colors.length > 0 ? `- *Warna :* ${colors.join(', ')}` : '';
+
+    // Mengambil pola dari deskripsi pertama (jika ada)
+    const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
+
+    // Menyusun nama item sebagai list
+    const itemNameList = product.name.map(name => {
+        const descForName = descriptionData.find(d => d.itemCode === name);
+        return descForName?.itemNamebyHC ?? descForName?.itemName ?? name;
+    });
+
+    return {
+        itemName: itemName,
+        descriptionText: `- *Nama Item :* ${itemNameList.join(', ')}
 - *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
 - *Kategori :* ${category}
-${color ? `${color}\n` : ''}
+${colorList ? `${colorList}\n` : ''}
 ${pattern ? `${pattern}\n` : ''}`
-        };
     };
-
+};
     // Fungsi untuk menghitung tanggal Close PO dan Estimasi Ready
     const calculateDates = () => {
         const today = new Date();
@@ -97,25 +113,25 @@ ${pattern ? `${pattern}\n` : ''}`
         const { closePO, estimasiReady } = calculateDates();
 
         filteredProducts.forEach(product => {
-            const description = descriptionData.find(desc => product.name.includes(desc.itemCode)); // Sesuaikan dengan grup
+    const description = descriptionData.find(desc => product.name.includes(desc.itemCode)); // Sesuaikan dengan grup
 
-            // Parsing harga
-            const parsePrice = (price) => parseFloat(price.replace(/,/g, ''));
-            const originalPrice = parsePrice(product.originalPrice);
-            const discountPercentage = parseFloat(product.discountPercentage);
-            const jastipDiscount = 10; // Diskon Jastip tetap 10%
-            const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
-            const min1 = 3, min2 = 5, min3 = 10;
-            const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
-            const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
-            const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
-            // Format harga
-            const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
+    // Parsing harga
+    const parsePrice = (price) => parseFloat(price.replace(/,/g, ''));
+    const originalPrice = parsePrice(product.originalPrice);
+    const discountPercentage = parseFloat(product.discountPercentage);
+    const jastipDiscount = 10; // Diskon Jastip tetap 10%
+    const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
+    const min1 = 3, min2 = 5, min3 = 10;
+    const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
+    const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
+    const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
+    // Format harga
+    const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
 
-            // Menghasilkan deskripsi produk
-            const { itemName, descriptionText } = generateDescription(description);
+    // Menghasilkan deskripsi produk
+    const { itemName, descriptionText } = generateDescription(description, product); // Menambahkan parameter product
 
-            const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name.join(', ')} ${itemName}]* 🌟  \n
+    const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name.join(', ')} ${itemName}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
 
