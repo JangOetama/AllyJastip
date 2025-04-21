@@ -132,7 +132,7 @@ ${pattern ? `${pattern}\n` : ''}`
     // Menghasilkan deskripsi produk
     const { itemName, descriptionText } = generateDescription(description, product); // Menambahkan parameter product
 
-    const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${product.name.join(', ')} ${itemName}]* 🌟  \n
+    const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${itemName}]* 🌟  \n
 🔥 *Harga Spesial Ally Jastip :*
     ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
 
