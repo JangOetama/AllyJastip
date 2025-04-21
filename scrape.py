@@ -53,11 +53,11 @@ for item in soup.select('#mydivproduct .product__item'):
     })
 
 # Mengelompokkan produk berdasarkan kriteria
-products = []
+grouped_products = []
 for product in products:
     # Cari apakah produk ini bisa dimasukkan ke grup yang sudah ada
     added_to_group = False
-    for group in products:
+    for group in grouped_products:
         # Periksa apakah produk ini mirip dengan salah satu nama dalam grup
         if (
             group['originalPrice'] == product['originalPrice'] and
@@ -73,7 +73,7 @@ for product in products:
 
     if not added_to_group:
         # Buat grup baru jika tidak ada yang cocok
-        products.append({
+        grouped_products.append({
             'name': [product['name']],
             'image': [product['image']],
             'originalPrice': product['originalPrice'],
@@ -82,7 +82,7 @@ for product in products:
         })
 
 # Simpan hasil ke file JSON
-with open('products.json', 'w') as f:
-    json.dump(products, f, indent=4)
+with open('grouped_products.json', 'w') as f:
+    json.dump(grouped_products, f, indent=4)
 
-print("Scraping selesai. Data disimpan ke products.json")
+print("Scraping selesai. Data disimpan ke grouped_products.json")
