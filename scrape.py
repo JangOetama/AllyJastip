@@ -57,19 +57,24 @@ for item in soup_feelbuy.select('#mydivproduct .product__item'):
         'type': "Jastip"  # Tipe produk untuk feelbuyshop.com
     })
 
-# URL untuk lynk.id
-url_lynk = "https://lynk.id/waffalya"
+url = "https://lynk.id/waffalya"
 
 # Header untuk menyamar sebagai browser
 headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://lynk.id/",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "Connection": "keep-alive"
 }
 
-# Mengambil konten halaman web dari lynk.id
+# Mengambil konten halaman web
 try:
-    response_lynk = requests.get(url_lynk, headers=headers)
-    response_lynk.raise_for_status()  # Memastikan tidak ada error HTTP
-    html_content_lynk = response_lynk.text
+    session = requests.Session()
+    session.headers.update(headers)
+    response = session.get(url)
+    response.raise_for_status()  # Memastikan tidak ada error HTTP
+    html_content = response.text
 except requests.exceptions.RequestException as e:
     print("Error fetching the page: {}".format(e))
     exit()
