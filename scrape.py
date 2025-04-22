@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
-from fake_useragent import UserAgent  # Untuk rotasi User-Agent
 import cloudscraper  # Untuk bypass Cloudflare
 
 # Fungsi untuk memeriksa kesamaan nama produk (minimal 3 karakter pertama harus sama)
@@ -15,10 +14,8 @@ def scrape_lynk():
     # URL target
     url = "https://lynk.id/waffalya"
 
-    # Rotasi User-Agent menggunakan fake-useragent
-    ua = UserAgent()
     headers = {
-        "User-Agent": ua.random,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         "Accept-Language": "en-US,en;q=0.9",
         "Referer": "https://lynk.id/",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
