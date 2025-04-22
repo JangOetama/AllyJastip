@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import re
-import cloudscraper  # Untuk bypass Cloudflare
 
 # Fungsi untuk memeriksa kesamaan nama produk (minimal 3 karakter pertama harus sama)
 def is_similar_name(name1, name2):
@@ -24,16 +23,13 @@ def scrape_lynk():
         "Connection": "keep-alive"
     }
 
-    # Gunakan cloudscraper untuk bypass Cloudflare jika diperlukan
-    scraper = cloudscraper.create_scraper()
-
     try:
-        # Mengambil konten halaman web dengan cloudscraper
-        response = scraper.get(url, headers=headers)
+        # Mengambil konten halaman web dengan requests
+        response = requests.get(url, headers=headers)
         response.raise_for_status()  # Memastikan tidak ada error HTTP
         html_content = response.text
     except Exception as e:
-        print("Error fetching the page using cloudscraper: {}".format(e))
+        print("Error fetching the page using requests: {}".format(e))
         return []
 
     # Parsing HTML
