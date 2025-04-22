@@ -1,4 +1,4 @@
-import httpx
+import requests
 from bs4 import BeautifulSoup
 import json
 import re
@@ -90,44 +90,45 @@ def scrape_feelbuy():
 
     product_url_feelbuy = 'https://feelbuyshop.com/preorderjastip/?f=home'
 
-    # Inisialisasi session dengan httpx
-    with httpx.Client() as session:
-        # Login ke situs feelbuyshop.com
-        response = session.post(login_url, data=login_data)
+    # Inisialisasi session dengan requests
+    session = requests.Session()
 
-        # Ambil halaman produk dari feelbuyshop.com
-        product_page_feelbuy = session.get(product_url_feelbuy)
+    # Login ke situs feelbuyshop.com
+    response = session.post(login_url, data=login_data)
 
-        # Parsing HTML feelbuyshop.com
-        soup_feelbuy = BeautifulSoup(product_page_feelbuy.content, 'html.parser')
+    # Ambil halaman produk dari feelbuyshop.com
+    product_page_feelbuy = session.get(product_url_feelbuy)
 
-        # Ekstraksi data produk dari feelbuyshop.com
-        products_feelbuy = []
-        for item in soup_feelbuy.select('#mydivproduct .product__item'):
-            name = item.select_one('.product__item__text h6').text.strip()
-            original_price_text = item.select_one('.product__item__text h5 s').text.strip().replace('Rp. ', '')
-            original_price = float(original_price_text.replace(',', ''))
+    # Parsing HTML feelbuyshop.com
+    soup_feelbuy = BeautifulSoup(product_page_feelbuy.content, 'html.parser')
 
-            discount_percentage_text = item.select_one('.product__item__text h5 sup font').text.strip()
-            discount_percentage = 0
+    # Ekstraksi data produk dari feelbuyshop.com
+    products_feelbuy = []
+    for item in soup_feelbuy.select('#mydivproduct .product__item'):
+        name = item.select_one('.product__item__text h6').text.strip()
+        original_price_text = item.select_one('.product__item__text h5 s').text.strip().replace('Rp. ', '')
+        original_price = float(original_price_text.replace(',', ''))
 
-            match = re.search(r'(-?\d+(\.\d+)?)%', discount_percentage_text)
-            if match:
-                discount_percentage = float(match.group(1).replace('-', ''))
+        discount_percentage_text = item.select_one('.product__item__text h5 sup font').text.strip()
+        discount_percentage = 0
 
-            discounted_price = original_price - (original_price * (discount_percentage / 100))
-            image_tag = item.select_one('.product__item__pic')
-            image_url = image_tag['data-setbg'] if image_tag else None
+        match = re.search(r'(-?\d+(\.\d+)?)%', discount_percentage_text)
+        if match:
+            discount_percentage = float(match.group(1).replace('-', ''))
 
-            products_feelbuy.append({
-                'name': name,
-                'image': 'https://feelbuyshop.com/preorderjastip/' + image_url if image_url else None,
-                'originalPrice': original_price_text,
-                'discountedPrice': "{:,.0f}".format(discounted_price),
-                'discountPercentage': "{}%".format(discount_percentage),
-                'link': "",  # Link kosong karena tidak ada informasi link
-                'type': "Jastip"  # Tipe produk untuk feelbuyshop.com
-            })
+        discounted_price = original_price - (original_price * (discount_percentage / 100))
+        image_tag = item.select_one('.product__item__pic')
+        image_url = image_tag['data-setbg'] if image_tag else None
+
+        products_feelbuy.append({
+            'name': name,
+            'image': 'https://feelbuyshop.com/preorderjastip/' + image_url if image_url else None,
+            'originalPrice': original_price_text,
+            'discountedPrice': "{:,.0f}".format(discounted_price),
+            'discountPercentage': "{}%".format(discount_percentage),
+            'link': "",  # Link kosong karena tidak ada informasi link
+            'type': "Jastip"  # Tipe produk untuk feelbuyshop.com
+        })
 
     return products_feelbuy
 
