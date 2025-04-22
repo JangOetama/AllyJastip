@@ -1,89 +1,42 @@
-import requests
+import httpx
 from bs4 import BeautifulSoup
 import json
 import re
+from fake_useragent import UserAgent  # Untuk rotasi User-Agent
+import cloudscraper  # Untuk bypass Cloudflare
 
 # Fungsi untuk memeriksa kesamaan nama produk (minimal 3 karakter pertama harus sama)
 def is_similar_name(name1, name2):
     pattern = re.compile(r'^' + re.escape(name1[:3]))
     return bool(pattern.match(name2))
 
-# Fungsi untuk scraping data dari feelbuyshop.com
-def scrape_feelbuy():
-    # URL login dan data login untuk feelbuyshop.com
-    login_url = 'https://feelbuyshop.com/preorderjastip/?f=login'
-    login_data = {
-        'username': '085161117349',
-        'submit': ''
-    }
-
-    product_url_feelbuy = 'https://feelbuyshop.com/preorderjastip/?f=home'
-
-    # Inisialisasi session untuk feelbuyshop.com
-    session = requests.Session()
-
-    # Login ke situs feelbuyshop.com
-    response = session.post(login_url, data=login_data)
-
-    # Ambil halaman produk dari feelbuyshop.com
-    product_page_feelbuy = session.get(product_url_feelbuy)
-
-    # Parsing HTML feelbuyshop.com
-    soup_feelbuy = BeautifulSoup(product_page_feelbuy.content, 'html.parser')
-
-    # Ekstraksi data produk dari feelbuyshop.com
-    products_feelbuy = []
-    for item in soup_feelbuy.select('#mydivproduct .product__item'):
-        name = item.select_one('.product__item__text h6').text.strip()
-        original_price_text = item.select_one('.product__item__text h5 s').text.strip().replace('Rp. ', '')
-        original_price = float(original_price_text.replace(',', ''))
-
-        discount_percentage_text = item.select_one('.product__item__text h5 sup font').text.strip()
-        discount_percentage = 0
-
-        match = re.search(r'(-?\d+(\.\d+)?)%', discount_percentage_text)
-        if match:
-            discount_percentage = float(match.group(1).replace('-', ''))
-
-        discounted_price = original_price - (original_price * (discount_percentage / 100))
-        image_tag = item.select_one('.product__item__pic')
-        image_url = image_tag['data-setbg'] if image_tag else None
-
-        products_feelbuy.append({
-            'name': name,
-            'image': 'https://feelbuyshop.com/preorderjastip/' + image_url if image_url else None,
-            'originalPrice': original_price_text,
-            'discountedPrice': "{:,.0f}".format(discounted_price),
-            'discountPercentage': "{}%".format(discount_percentage),
-            'link': "",  # Link kosong karena tidak ada informasi link
-            'type': "Jastip"  # Tipe produk untuk feelbuyshop.com
-        })
-
-    return products_feelbuy
-
 # Fungsi untuk scraping data dari lynk.id
 def scrape_lynk():
     # URL target
     url = "https://lynk.id/waffalya"
 
-    # Header untuk menyamar sebagai browser
+    # Rotasi User-Agent menggunakan fake-useragent
+    ua = UserAgent()
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "User-Agent": ua.random,
         "Accept-Language": "en-US,en;q=0.9",
         "Referer": "https://lynk.id/",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Cache-Control": "no-cache",
         "Connection": "keep-alive"
     }
 
-    # Mengambil konten halaman web
+    # Gunakan cloudscraper untuk bypass Cloudflare jika diperlukan
+    scraper = cloudscraper.create_scraper()
+
     try:
-        session = requests.Session()
-        session.headers.update(headers)
-        response = session.get(url)
+        # Mengambil konten halaman web dengan cloudscraper
+        response = scraper.get(url, headers=headers)
         response.raise_for_status()  # Memastikan tidak ada error HTTP
         html_content = response.text
-    except requests.exceptions.RequestException as e:
-        print("Error fetching the page: {}".format(e))
+    except Exception as e:
+        print("Error fetching the page using cloudscraper: {}".format(e))
         return []
 
     # Parsing HTML
@@ -125,6 +78,58 @@ def scrape_lynk():
             })
 
     return products_lynk
+
+# Fungsi untuk scraping data dari feelbuyshop.com
+def scrape_feelbuy():
+    # URL login dan data login untuk feelbuyshop.com
+    login_url = 'https://feelbuyshop.com/preorderjastip/?f=login'
+    login_data = {
+        'username': '085161117349',
+        'submit': ''
+    }
+
+    product_url_feelbuy = 'https://feelbuyshop.com/preorderjastip/?f=home'
+
+    # Inisialisasi session dengan httpx
+    with httpx.Client() as session:
+        # Login ke situs feelbuyshop.com
+        response = session.post(login_url, data=login_data)
+
+        # Ambil halaman produk dari feelbuyshop.com
+        product_page_feelbuy = session.get(product_url_feelbuy)
+
+        # Parsing HTML feelbuyshop.com
+        soup_feelbuy = BeautifulSoup(product_page_feelbuy.content, 'html.parser')
+
+        # Ekstraksi data produk dari feelbuyshop.com
+        products_feelbuy = []
+        for item in soup_feelbuy.select('#mydivproduct .product__item'):
+            name = item.select_one('.product__item__text h6').text.strip()
+            original_price_text = item.select_one('.product__item__text h5 s').text.strip().replace('Rp. ', '')
+            original_price = float(original_price_text.replace(',', ''))
+
+            discount_percentage_text = item.select_one('.product__item__text h5 sup font').text.strip()
+            discount_percentage = 0
+
+            match = re.search(r'(-?\d+(\.\d+)?)%', discount_percentage_text)
+            if match:
+                discount_percentage = float(match.group(1).replace('-', ''))
+
+            discounted_price = original_price - (original_price * (discount_percentage / 100))
+            image_tag = item.select_one('.product__item__pic')
+            image_url = image_tag['data-setbg'] if image_tag else None
+
+            products_feelbuy.append({
+                'name': name,
+                'image': 'https://feelbuyshop.com/preorderjastip/' + image_url if image_url else None,
+                'originalPrice': original_price_text,
+                'discountedPrice': "{:,.0f}".format(discounted_price),
+                'discountPercentage': "{}%".format(discount_percentage),
+                'link': "",  # Link kosong karena tidak ada informasi link
+                'type': "Jastip"  # Tipe produk untuk feelbuyshop.com
+            })
+
+    return products_feelbuy
 
 # Gabungkan data dari kedua sumber
 def main():
