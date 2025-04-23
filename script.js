@@ -75,6 +75,7 @@ function updateCategoryFilter(selectedType) {
 }
 
 // Render Products
+// Render Products
 function renderProducts(filteredProducts) {
   const productGrid = document.getElementById('product-grid');
   productGrid.innerHTML = ''; // Clear existing products
@@ -87,14 +88,57 @@ function renderProducts(filteredProducts) {
   filteredProducts.forEach(product => {
     const card = document.createElement('div');
     card.className = 'product-card';
-    card.innerHTML = `
-      <img src="${product.image[0]}" alt="${product.name.join(', ')}">
+
+    // Create image container for slideshow
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'image-container';
+    imageContainer.style.position = 'relative';
+    imageContainer.style.overflow = 'hidden';
+
+    // Check if there are multiple images
+    if (product.image.length > 1) {
+      product.image.forEach((imgSrc, index) => {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.alt = product.name.join(', ');
+        img.style.position = 'absolute';
+        img.style.top = '0';
+        img.style.left = '0';
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        img.style.opacity = index === 0 ? '1' : '0'; // Only show the first image initially
+        img.style.transition = 'opacity 0.5s ease-in-out';
+        imageContainer.appendChild(img);
+      });
+
+      // Add automatic slideshow functionality
+      let currentIndex = 0;
+      setInterval(() => {
+        const images = imageContainer.querySelectorAll('img');
+        images[currentIndex].style.opacity = '0'; // Hide current image
+        currentIndex = (currentIndex + 1) % images.length; // Move to the next image
+        images[currentIndex].style.opacity = '1'; // Show next image
+      }, 3000); // Change image every 3 seconds
+    } else {
+      // If only one image, display it directly
+      const img = document.createElement('img');
+      img.src = product.image[0];
+      img.alt = product.name.join(', ');
+      img.style.width = '100%';
+      img.style.height = 'auto';
+      imageContainer.appendChild(img);
+    }
+
+    // Append image container and other details to the card
+    card.innerHTML += `
       <p>${product.name.join(', ')}</p>
       <p class="price">
         ${product.discountPercentage !== "0%" ? `<span class="original-price">${product.originalPrice}</span>` : ''}
         <span class="discounted-price">${product.discountedPrice}</span>
       </p>
     `;
+    card.prepend(imageContainer); // Add image container to the top of the card
+
     if (product.link) {
       card.onclick = () => window.open(product.link, '_blank');
     }
