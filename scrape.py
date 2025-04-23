@@ -2,6 +2,7 @@ import json
 import re
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
+import requests
 
 def scrape_lynk():
     url = "https://lynk.id/waffalya"
