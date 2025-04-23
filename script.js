@@ -75,7 +75,6 @@ function updateCategoryFilter(selectedType) {
 }
 
 // Render Products
-// Render Products
 function renderProducts(filteredProducts) {
   const productGrid = document.getElementById('product-grid');
   productGrid.innerHTML = ''; // Clear existing products
