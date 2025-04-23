@@ -28,6 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 playwright
           npx playwright install --with-deps chromium  # Install dependencies + browser spesifik
+          playwright install
 
       - name: Remove Existing grouped_products.json
         run: |
