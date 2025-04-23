@@ -153,3 +153,16 @@ section.active {
   text-decoration: line-through;
   color: #aaa;
 }
+
+.image-container {
+  width: 100%;
+  height: auto;
+  position: relative;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
