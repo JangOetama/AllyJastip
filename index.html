@@ -1,23 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ally Jastip</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioLink | Market</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Ally Jastip</h1>
-        <div id="categoryFilter">
-            <!-- Filter kategori akan di-render di sini -->
-        </div>
-    </header>
-    <main>
-        <div id="productGrid">
-            <!-- Produk akan di-render di sini -->
-        </div>
-    </main>
-    <script src="script.js"></script>
+  <!-- Header -->
+  <header>
+    <div class="profile">
+      <img src="" alt="Profile Picture" id="profile-photo">
+      <h2 id="instagram-id"></h2>
+      <p id="followers"></p>
+      <p id="description"></p>
+    </div>
+    <nav>
+      <button id="tab-biolink" class="active">BioLink</button>
+      <button id="tab-market">Market</button>
+    </nav>
+  </header>
+
+  <!-- Content -->
+  <main>
+    <!-- BioLink Section -->
+    <section id="biolink-section" class="active">
+      <div class="button-container" id="button-container"></div>
+    </section>
+
+    <!-- Market Section -->
+    <section id="market-section">
+      <div class="filters">
+        <select id="type-filter">
+          <option value="all">All Types</option>
+          <option value="Jastip">Jastip</option>
+          <option value="Book">Books</option>
+          <option value="Shopee">Shopee</option>
+        </select>
+        <select id="category-filter">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+      <div class="product-grid" id="product-grid"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
