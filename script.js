@@ -22,6 +22,27 @@ fetch('grouped_products.json')
   .then(response => response.json())
   .then(data => {
     products = data;
+
+    // Populate Type and Category filters
+    const types = [...new Set(products.map(p => p.type))];
+    const categories = [...new Set(products.map(p => p.category))];
+
+    const typeFilter = document.getElementById('type-filter');
+    types.forEach(type => {
+      const option = document.createElement('option');
+      option.value = type;
+      option.textContent = type;
+      typeFilter.appendChild(option);
+    });
+
+    const categoryFilter = document.getElementById('category-filter');
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      categoryFilter.appendChild(option);
+    });
+
     renderProducts(products);
   });
 
