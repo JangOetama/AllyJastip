@@ -386,11 +386,22 @@
     },
     {
         "name": [
-            "HAP823MIT",
+            "HAP823MIT"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/HAP823MIT.jpg"
+        ],
+        "originalPrice": "57,000",
+        "discountedPrice": "34,200",
+        "discountPercentage": "40.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
             "HAP823WHT"
         ],
         "image": [
-            "https://feelbuyshop.com/preorderjastip/img/product/HAP823MIT.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/HAP823WHT.jpg"
         ],
         "originalPrice": "57,000",
@@ -401,11 +412,22 @@
     },
     {
         "name": [
-            "ABF664GRY",
+            "ABF664GRY"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/ABF664GRY.jpg"
+        ],
+        "originalPrice": "139,000",
+        "discountedPrice": "83,400",
+        "discountPercentage": "40.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
             "ABF664BLU"
         ],
         "image": [
-            "https://feelbuyshop.com/preorderjastip/img/product/ABF664GRY.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/ABF664BLU.jpg"
         ],
         "originalPrice": "139,000",
@@ -497,13 +519,24 @@
     {
         "name": [
             "LHC3249BLK",
-            "LHC3249IVY",
             "LHC3249LPIK"
         ],
         "image": [
             "https://feelbuyshop.com/preorderjastip/img/product/LHC3249BLK.jpg",
-            "https://feelbuyshop.com/preorderjastip/img/product/LHC3249IVY.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/LHC3249LPIK.jpg"
+        ],
+        "originalPrice": "329,000",
+        "discountedPrice": "154,630",
+        "discountPercentage": "53.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
+            "LHC3249IVY"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/LHC3249IVY.jpg"
         ],
         "originalPrice": "329,000",
         "discountedPrice": "154,630",
@@ -553,13 +586,35 @@
     },
     {
         "name": [
-            "LHC4242PIK",
-            "LHC4242WHT",
+            "LHC4242PIK"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/LHC4242PIK.jpg"
+        ],
+        "originalPrice": "235,000",
+        "discountedPrice": "141,000",
+        "discountPercentage": "40.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
+            "LHC4242WHT"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/LHC4242WHT.jpg"
+        ],
+        "originalPrice": "235,000",
+        "discountedPrice": "141,000",
+        "discountPercentage": "40.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
             "LHC4242GRY"
         ],
         "image": [
-            "https://feelbuyshop.com/preorderjastip/img/product/LHC4242PIK.jpg",
-            "https://feelbuyshop.com/preorderjastip/img/product/LHC4242WHT.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/LHC4242GRY.jpg"
         ],
         "originalPrice": "235,000",
@@ -570,11 +625,22 @@
     },
     {
         "name": [
-            "LHC4241WHT",
+            "LHC4241WHT"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/LHC4241WHT.jpg"
+        ],
+        "originalPrice": "220,000",
+        "discountedPrice": "132,000",
+        "discountPercentage": "40.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
             "LHC4241GRY"
         ],
         "image": [
-            "https://feelbuyshop.com/preorderjastip/img/product/LHC4241WHT.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/LHC4241GRY.jpg"
         ],
         "originalPrice": "220,000",
@@ -586,13 +652,24 @@
     {
         "name": [
             "LHC4219WHT",
-            "LHC4219NVY",
             "LHC4219MIT"
         ],
         "image": [
             "https://feelbuyshop.com/preorderjastip/img/product/LHC4219WHT.jpg",
-            "https://feelbuyshop.com/preorderjastip/img/product/LHC4219NVY.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/LHC4219MIT.jpg"
+        ],
+        "originalPrice": "330,000",
+        "discountedPrice": "181,500",
+        "discountPercentage": "45.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
+            "LHC4219NVY"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/LHC4219NVY.jpg"
         ],
         "originalPrice": "330,000",
         "discountedPrice": "181,500",
@@ -641,11 +718,22 @@
     },
     {
         "name": [
-            "LHC3280RED",
+            "LHC3280RED"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/LHC3280RED.jpg"
+        ],
+        "originalPrice": "349,000",
+        "discountedPrice": "101,210",
+        "discountPercentage": "71.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
             "LHC3280WHT"
         ],
         "image": [
-            "https://feelbuyshop.com/preorderjastip/img/product/LHC3280RED.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/LHC3280WHT.jpg"
         ],
         "originalPrice": "349,000",
@@ -656,11 +744,22 @@
     },
     {
         "name": [
-            "ABF763YEL",
+            "ABF763YEL"
+        ],
+        "image": [
+            "https://feelbuyshop.com/preorderjastip/img/product/ABF763YEL.jpg"
+        ],
+        "originalPrice": "335,000",
+        "discountedPrice": "100,500",
+        "discountPercentage": "70.0%",
+        "link": "",
+        "type": "Jastip"
+    },
+    {
+        "name": [
             "ABF763GRN"
         ],
         "image": [
-            "https://feelbuyshop.com/preorderjastip/img/product/ABF763YEL.jpg",
             "https://feelbuyshop.com/preorderjastip/img/product/ABF763GRN.jpg"
         ],
         "originalPrice": "335,000",
@@ -681,5 +780,135 @@
         "discountPercentage": "70.0%",
         "link": "",
         "type": "Jastip"
+    },
+    {
+        "name": [
+            "Alkindi SmartModules Series - Tanaman Karunia Allah"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/07-11-2024/1730944773564_7145067"
+        ],
+        "originalPrice": "20000",
+        "discountedPrice": "20000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/5paM2qM",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Alkindi Brilliant Workbooks - QS.An-Nas."
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/18-12-2024/1734515911023_1393523"
+        ],
+        "originalPrice": "20000",
+        "discountedPrice": "20000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/AVRDAor",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Alkindi Brilliant Workbooks - QS. Al-Ikhlas"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/04-11-2024/1730679564772_6849008"
+        ],
+        "originalPrice": "20000",
+        "discountedPrice": "20000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/4v0np5o",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Worksheet mengenal 5 Rukun Islam - Alkindi"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/08-11-2024/1731039939863_7399208"
+        ],
+        "originalPrice": "50000",
+        "discountedPrice": "50000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/VE20ZlX",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Special bundling worksheet aktivitas muslim pertamaku Alkindi"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/08-11-2024/1731039976165_3265577"
+        ],
+        "originalPrice": "99000",
+        "discountedPrice": "99000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/27jWzEW",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Bundling produk lengkap 400+ Brilliant Worksheet + E-Book Alkindi"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/07-11-2024/1730946300901_7644978"
+        ],
+        "originalPrice": "159000",
+        "discountedPrice": "159000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/XZnPGpn",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Alkindi brilliant worksheet Al-Fiil"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/18-12-2024/1734514614006_8670328"
+        ],
+        "originalPrice": "20000",
+        "discountedPrice": "20000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/PybeMgm",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Alkindi Brilliant Workbook - Al Fatihah"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/18-12-2024/1734515655462_7032041"
+        ],
+        "originalPrice": "20000",
+        "discountedPrice": "20000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/ZpNX3br",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Alkindi SmartModules series - Hewan Kecil Ciptaan Allah"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/07-11-2024/1730944610177_4017300"
+        ],
+        "originalPrice": "20000",
+        "discountedPrice": "20000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/ZbaYopE",
+        "type": "Book"
+    },
+    {
+        "name": [
+            "Alkindi Brilliant Workbooks - QS.Al-Asr"
+        ],
+        "image": [
+            "https://cdn.lynkid.my.id/products/18-12-2024/1734516398992_7879852"
+        ],
+        "originalPrice": "20000",
+        "discountedPrice": "20000",
+        "discountPercentage": "0.0%",
+        "link": "https://lynk.id/waffalya/2eNblq3",
+        "type": "Book"
     }
 ]
