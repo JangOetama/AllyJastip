@@ -126,3 +126,18 @@ section.active {
   text-decoration: line-through;
   color: #aaa;
 }
+
+.filters input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.filters input[type="text"]:focus {
+  outline: none;
+  border-color: #ff6f61;
+  box-shadow: 0 0 5px rgba(255, 111, 97, 0.5);
+}
