@@ -1,32 +1,38 @@
 name: Scrape Products
 
+# Trigger workflow secara manual, pada push ke branch main, atau berdasarkan jadwal harian
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Memungkinkan eksekusi manual dari GitHub Actions UI [[3]]
   push:
-    branches: [main]
+    branches: [main] # Trigger saat ada push ke branch main
   schedule:
-    - cron: '0 0 * * *'  # Setiap hari pukul 00:00
+    - cron: '0 0 * * *' # Menjalankan scraping setiap hari pukul 00:00 UTC [[4]]
 
 jobs:
   scrape:
     permissions:
-      contents: write
-    runs-on: ubuntu-latest
+      contents: write # Izin untuk menulis perubahan ke repository
+    runs-on: ubuntu-latest # Menjalankan job di lingkungan Ubuntu terbaru
 
     steps:
+      # Langkah 1: Checkout repository
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3 # Menggunakan action checkout untuk mengakses kode repository
 
+      # Langkah 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11.0'
+          python-version: '3.11.0' # Menggunakan Python versi 3.11.0
 
+      # Langkah 3: Install dependencies
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
+          python -m pip install --upgrade pip # Memastikan pip adalah versi terbaru
+          pip install requests beautifulsoup4 playwright # Menambahkan playwright karena digunakan untuk scraping lynk.id
+          playwright install # Menginstal browser yang diperlukan oleh Playwright [[4]]
 
+      # Langkah 4: Hapus file grouped_products.json jika sudah ada
       - name: Remove Existing grouped_products.json (if exists)
         run: |
           if [ -f "grouped_products.json" ]; then
@@ -36,22 +42,24 @@ jobs:
             echo "No existing grouped_products.json found."
           fi
 
+      # Langkah 5: Jalankan script scraping
       - name: Run Scrape Script
-        run: python scrape.py
+        run: python scrape.py # Menjalankan script Python untuk scraping data
 
+      # Langkah 6: Commit dan push perubahan jika ada
       - name: Commit and Push Changes
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # Menggunakan token GitHub untuk autentikasi
         run: |
-          git config user.name "GitHub Actions"
+          git config user.name "GitHub Actions" # Mengatur konfigurasi Git
           git config user.email "actions@github.com"
 
-          # Periksa apakah ada perubahan (misalnya, file products.json baru dibuat)
+          # Periksa apakah ada perubahan di repository
           if [ -n "$(git status --porcelain)" ]; then
             echo "Changes detected. Committing and pushing changes..."
-            git add .
-            git commit -m "Update grouped_products.json"
-            git push https://${{ secrets.GH_TOKEN }}@github.com/JangOetama/AllyJastip.git HEAD:main
+            git add grouped_products.json # Menambahkan file hasil scraping ke staging area
+            git commit -m "Update grouped_products.json" # Commit perubahan
+            git push https://${{ secrets.GH_TOKEN }}@github.com/JangOetama/AllyJastip.git HEAD:main # Push ke branch main
           else
-            echo "No changes to commit."
+            echo "No changes to commit." # Tidak ada perubahan yang perlu di-commit
           fi
