@@ -1,69 +1,67 @@
-import requests
 import json
 import re
+import requests
+from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
-from playwright.sync_api import sync_playwright
 
 def scrape_lynk():
     with sync_playwright() as p:
-        # Launch browser in headless mode
+        # Launch browser
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
-        # URL target
-        url = "https://lynk.id/waffalya"
-
         try:
-            # Navigate to the page
-            page.goto(url, wait_until="networkidle")
+            # Navigate to target URL dengan timeout yang disesuaikan
+            page.goto(
+                "https://lynk.id/waffalya",
+                wait_until="domcontentloaded",  # Gunakan kondisi yang lebih stabil [[8]]
+                timeout=60000  # 60 detik
+            )
+            
+            # Tunggu elemen kritis untuk memastikan halaman siap
+            page.wait_for_selector("p.filter-0", timeout=30000)
 
-            # Extract HTML content
+            # Ambil konten HTML
             html_content = page.content()
-
-            # Parse HTML content using BeautifulSoup
             soup = BeautifulSoup(html_content, 'html.parser')
 
-            # Mencari semua elemen produk
+            # Ekstraksi data produk (sesuaikan dengan struktur HTML lynk.id)
             product_elements = soup.find_all('a', href=True)
-
-            # List untuk menyimpan hasil akhir
             products_lynk = []
 
-            # Loop melalui setiap elemen produk
             for product in product_elements:
-                # Nama produk
                 name_element = product.find('p', class_='filter-0')
                 name = name_element.get_text(strip=True) if name_element else None
 
-                # Harga produk
                 price_element = product.find('span', class_='price')
                 price = price_element.get_text(strip=True).replace("IDR ", "").replace("K", "000") if price_element else None
 
-                # Gambar produk
                 image_element = product.find('img', alt="product_image")
                 image_url = image_element['src'] if image_element and 'src' in image_element.attrs else None
 
-                # Link produk
                 link = "https://lynk.id" + product['href']
 
-                # Tambahkan data produk ke list
                 if name and price and image_url and link:
                     products_lynk.append({
                         "name": [name],
                         "image": [image_url],
                         "originalPrice": price,
-                        "discountedPrice": price,  # Asumsi tidak ada diskon
+                        "discountedPrice": price,
                         "discountPercentage": "0.0%",
                         "link": link,
-                        "type": "Book"  # Tipe produk untuk lynk.id
+                        "type": "Book"
                     })
 
+        except Exception as e:
+            # Simpan screenshot untuk debugging [[8]]
+            page.screenshot(path="error.png")
+            raise e
+
         finally:
-            # Close the browser
             browser.close()
 
-    return products_lynk
+        return products_lynk
 
 # Fungsi untuk scraping feelbuyshop.com tetap menggunakan requests
 def scrape_feelbuy():
