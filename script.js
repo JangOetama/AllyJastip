@@ -16,7 +16,6 @@ fetch('biolink_data.json')
     });
   });
 
-
 // Load Market Data
 let products = [];
 let groupedProducts = {}; // Struktur untuk mengelompokkan produk
@@ -54,6 +53,9 @@ fetch('grouped_products.json')
 
     // Default: Populate Category filter for the first type
     updateCategoryFilter(types[0]);
+
+    // Initial render
+    applyFilters();
   });
 
 // Update Category filter based on selected Type
@@ -67,8 +69,18 @@ function updateCategoryFilter(selectedType) {
   defaultOption.textContent = 'All Categories';
   categoryFilter.appendChild(defaultOption);
 
-  // Add categories for the selected type
-  if (groupedProducts[selectedType]) {
+  // Add categories for the selected type or all types
+  if (selectedType === 'all') {
+    // Get all unique categories from all types
+    const allCategories = [...new Set(products.map(p => p.category))];
+    allCategories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      categoryFilter.appendChild(option);
+    });
+  } else {
+    // Get categories for the selected type
     const categories = Object.keys(groupedProducts[selectedType]);
     categories.forEach(category => {
       const option = document.createElement('option');
@@ -79,37 +91,6 @@ function updateCategoryFilter(selectedType) {
   }
 }
 
-// Event listener for Type filter
-document.getElementById('type-filter').addEventListener('change', (event) => {
-  const selectedType = event.target.value;
-  updateCategoryFilter(selectedType);
-  applyFilters();
-});
-
-// Filters
-document.getElementById('category-filter').addEventListener('change', applyFilters);
-
-function applyFilters() {
-  const type = document.getElementById('type-filter').value;
-  const category = document.getElementById('category-filter').value;
-
-  let filtered = [];
-
-  if (type === 'all') {
-    // Show all products
-    filtered = products;
-  } else {
-    if (category === 'all') {
-      // Show all categories for the selected type
-      filtered = Object.values(groupedProducts[type]).flat();
-    } else {
-      // Show only the selected category
-      filtered = groupedProducts[type][category] || [];
-    }
-  }
-
-  renderProducts(filtered);
-}
 // Render Products
 function renderProducts(filteredProducts) {
   const productGrid = document.getElementById('product-grid');
@@ -132,22 +113,35 @@ function renderProducts(filteredProducts) {
   });
 }
 
-// Tab Switching
-document.getElementById('tab-biolink').addEventListener('click', () => {
-  document.getElementById('biolink-section').classList.add('active');
-  document.getElementById('market-section').classList.remove('active');
-  document.getElementById('tab-biolink').classList.add('active');
-  document.getElementById('tab-market').classList.remove('active');
-});
+// Apply Filters and Search
+function applyFilters() {
+  const type = document.getElementById('type-filter').value;
+  const category = document.getElementById('category-filter').value;
+  const searchText = document.getElementById('search-box').value.toLowerCase();
 
-document.getElementById('tab-market').addEventListener('click', () => {
-  document.getElementById('biolink-section').classList.remove('active');
-  document.getElementById('market-section').classList.add('active');
-  document.getElementById('tab-biolink').classList.remove('active');
-  document.getElementById('tab-market').classList.add('active');
-});
+  let filtered = products;
 
-// Filters
+  // Filter by Type
+  if (type !== 'all') {
+    filtered = filtered.filter(p => p.type === type);
+  }
+
+  // Filter by Category
+  if (category !== 'all') {
+    filtered = filtered.filter(p => p.category === category);
+  }
+
+  // Filter by Search Text
+  if (searchText) {
+    filtered = filtered.filter(p =>
+      p.name.some(name => name.toLowerCase().includes(searchText))
+    );
+  }
+
+  renderProducts(filtered);
+}
+
+// Event Listeners
 document.getElementById('type-filter').addEventListener('change', (event) => {
   const selectedType = event.target.value;
   updateCategoryFilter(selectedType);
@@ -156,24 +150,4 @@ document.getElementById('type-filter').addEventListener('change', (event) => {
 
 document.getElementById('category-filter').addEventListener('change', applyFilters);
 
-function applyFilters() {
-  const type = document.getElementById('type-filter').value;
-  const category = document.getElementById('category-filter').value;
-
-  let filtered = [];
-
-  if (type === 'all') {
-    // Show all products
-    filtered = products;
-  } else {
-    if (category === 'all') {
-      // Show all categories for the selected type
-      filtered = products.filter(p => p.type === type);
-    } else {
-      // Show only the selected category
-      filtered = products.filter(p => p.type === type && p.category === category);
-    }
-  }
-
-  renderProducts(filtered);
-}
+document.getElementById('search-box').addEventListener('input', applyFilters);
