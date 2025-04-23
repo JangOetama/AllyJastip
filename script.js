@@ -55,40 +55,57 @@
             });
         }
 
-        function renderProducts(filteredProducts) {
-            const productGrid = document.getElementById('product-grid');
-            productGrid.innerHTML = '';
+function renderProducts(filteredProducts) {
+    const productGrid = document.getElementById('product-grid');
+    productGrid.innerHTML = '';
 
-            filteredProducts.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
+    filteredProducts.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
 
-                // Image Container
-                const imageContainer = document.createElement('div');
-                imageContainer.className = 'image-container';
+        // Image Container
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'image-container';
 
-                product.image.forEach((imgSrc, index) => {
-                    const img = document.createElement('img');
-                    img.src = imgSrc;
-                    img.alt = product.name.join(', ');
-                    if(index === 0) img.classList.add('active');
-                    imageContainer.appendChild(img);
-                });
+        // Tambahkan semua gambar
+        product.image.forEach((imgSrc, index) => {
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = product.name.join(', ');
+            img.style.opacity = index === 0 ? '1' : '0';
+            imageContainer.appendChild(img);
+        });
 
-                // Slideshow Logic
-                if(product.image.length > 1) {
-                    let currentIndex = 0;
-                    const images = imageContainer.querySelectorAll('img');
-                    
-                    const interval = setInterval(() => {
-                        images[currentIndex].classList.remove('active');
-                        currentIndex = (currentIndex + 1) % images.length;
-                        images[currentIndex].classList.add('active');
-                    }, 3000);
+        // Logic slideshow hanya jika ada lebih dari 1 gambar
+        if (product.image.length > 1) {
+            let currentIndex = 0;
+            const totalImages = product.image.length;
+            
+            // Fungsi untuk mengganti gambar
+            const cycleImages = () => {
+                const images = imageContainer.querySelectorAll('img');
+                
+                // Fade out gambar saat ini
+                images[currentIndex].style.opacity = '0';
+                
+                // Update index
+                currentIndex = (currentIndex + 1) % totalImages;
+                
+                // Fade in gambar berikutnya
+                setTimeout(() => {
+                    images[currentIndex].style.opacity = '1';
+                }, 500); // Sesuaikan dengan durasi transisi CSS
+            };
 
-                    // Cleanup on card removal
-                    card.addEventListener('DOMNodeRemoved', () => clearInterval(interval));
-                }
+            // Mulai interval
+            let intervalId = setInterval(cycleImages, 3000);
+
+            // Hentikan interval saat card dihover
+            card.addEventListener('mouseenter', () => clearInterval(intervalId));
+            card.addEventListener('mouseleave', () => {
+                intervalId = setInterval(cycleImages, 3000);
+            });
+        }
 
                 // Product Info
                 const productInfo = document.createElement('div');
