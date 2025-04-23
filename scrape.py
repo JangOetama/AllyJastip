@@ -1,59 +1,53 @@
+import requests
 import json
 import re
-from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
-import requests
+from difflib import SequenceMatcher
+from playwright.sync_api import sync_playwright
 
 def scrape_lynk():
-    url = "https://lynk.id/waffalya"
-    products_lynk = []
-
     with sync_playwright() as p:
-        # Launch browser dengan konfigurasi stealth
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
-                "--disable-blink-features=AutomationControlled",
-                "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-            ]
-        )
-        
-        context = browser.new_context(
-            viewport={"width": 1920, "height": 1080},
-            java_script_enabled=True,
-            bypass_csp=True
-        )
-        
-        page = context.new_page()
-        
+        # Launch browser in headless mode
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+
+        # URL target
+        url = "https://lynk.id/waffalya"
+
         try:
-            # Navigasi ke URL dengan delay acak
-            page.goto(url, wait_until="networkidle", timeout=60000)
-            
-            # Tunggu elemen muncul
-            page.wait_for_selector('a[href^="/products/"]', timeout=30000)
-            
-            # Ambil HTML setelah render JavaScript
+            # Navigate to the page
+            page.goto(url, wait_until="networkidle")
+
+            # Extract HTML content
             html_content = page.content()
-            
+
+            # Parse HTML content using BeautifulSoup
             soup = BeautifulSoup(html_content, 'html.parser')
-            
+
+            # Mencari semua elemen produk
             product_elements = soup.find_all('a', href=True)
 
+            # List untuk menyimpan hasil akhir
+            products_lynk = []
+
+            # Loop melalui setiap elemen produk
             for product in product_elements:
-                # Parsing data produk
+                # Nama produk
                 name_element = product.find('p', class_='filter-0')
                 name = name_element.get_text(strip=True) if name_element else None
 
+                # Harga produk
                 price_element = product.find('span', class_='price')
                 price = price_element.get_text(strip=True).replace("IDR ", "").replace("K", "000") if price_element else None
 
+                # Gambar produk
                 image_element = product.find('img', alt="product_image")
                 image_url = image_element['src'] if image_element and 'src' in image_element.attrs else None
 
+                # Link produk
                 link = "https://lynk.id" + product['href']
 
-                # Validasi data sebelum ditambahkan
+                # Tambahkan data produk ke list
                 if name and price and image_url and link:
                     products_lynk.append({
                         "name": [name],
@@ -62,12 +56,11 @@ def scrape_lynk():
                         "discountedPrice": price,  # Asumsi tidak ada diskon
                         "discountPercentage": "0.0%",
                         "link": link,
-                        "type": "Book"  # Tipe produk untuk lynk.id [[8]]
+                        "type": "Book"  # Tipe produk untuk lynk.id
                     })
 
-        except Exception as e:
-            print(f"Error during scraping: {str(e)}")
         finally:
+            # Close the browser
             browser.close()
 
     return products_lynk
@@ -125,7 +118,18 @@ def scrape_feelbuy():
 
     return products_feelbuy
 
-# Gabungkan data dari kedua sumber
+def is_similar_name(name1, name2, threshold=0.8):
+    """
+    Check if two names are similar based on a similarity threshold.
+    :param name1: First name (str)
+    :param name2: Second name (str)
+    :param threshold: Similarity threshold (float between 0 and 1)
+    :return: True if similarity >= threshold, False otherwise
+    """
+    similarity = SequenceMatcher(None, name1, name2).ratio()
+    return similarity >= threshold
+
+# Updated main() function
 def main():
     # Scrape data dari feelbuyshop.com
     products_feelbuy = scrape_feelbuy()
