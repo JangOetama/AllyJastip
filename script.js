@@ -16,17 +16,34 @@ fetch('biolink_data.json')
     });
   });
 
+
 // Load Market Data
 let products = [];
+let groupedProducts = {}; // Struktur untuk mengelompokkan produk
+
 fetch('grouped_products.json')
   .then(response => response.json())
   .then(data => {
     products = data;
 
-    // Populate Type and Category filters
-    const types = [...new Set(products.map(p => p.type))];
-    const categories = [...new Set(products.map(p => p.category))];
+    // Kelompokkan produk berdasarkan type dan category
+    products.forEach(product => {
+      const type = product.type;
+      const category = product.category;
 
+      if (!groupedProducts[type]) {
+        groupedProducts[type] = {};
+      }
+
+      if (!groupedProducts[type][category]) {
+        groupedProducts[type][category] = [];
+      }
+
+      groupedProducts[type][category].push(product);
+    });
+
+    // Populate Type filter
+    const types = Object.keys(groupedProducts);
     const typeFilter = document.getElementById('type-filter');
     types.forEach(type => {
       const option = document.createElement('option');
@@ -35,17 +52,64 @@ fetch('grouped_products.json')
       typeFilter.appendChild(option);
     });
 
-    const categoryFilter = document.getElementById('category-filter');
+    // Default: Populate Category filter for the first type
+    updateCategoryFilter(types[0]);
+  });
+
+// Update Category filter based on selected Type
+function updateCategoryFilter(selectedType) {
+  const categoryFilter = document.getElementById('category-filter');
+  categoryFilter.innerHTML = ''; // Clear existing options
+
+  // Add default option
+  const defaultOption = document.createElement('option');
+  defaultOption.value = 'all';
+  defaultOption.textContent = 'All Categories';
+  categoryFilter.appendChild(defaultOption);
+
+  // Add categories for the selected type
+  if (groupedProducts[selectedType]) {
+    const categories = Object.keys(groupedProducts[selectedType]);
     categories.forEach(category => {
       const option = document.createElement('option');
       option.value = category;
       option.textContent = category;
       categoryFilter.appendChild(option);
     });
+  }
+}
 
-    renderProducts(products);
-  });
+// Event listener for Type filter
+document.getElementById('type-filter').addEventListener('change', (event) => {
+  const selectedType = event.target.value;
+  updateCategoryFilter(selectedType);
+  applyFilters();
+});
 
+// Filters
+document.getElementById('category-filter').addEventListener('change', applyFilters);
+
+function applyFilters() {
+  const type = document.getElementById('type-filter').value;
+  const category = document.getElementById('category-filter').value;
+
+  let filtered = [];
+
+  if (type === 'all') {
+    // Show all products
+    filtered = products;
+  } else {
+    if (category === 'all') {
+      // Show all categories for the selected type
+      filtered = Object.values(groupedProducts[type]).flat();
+    } else {
+      // Show only the selected category
+      filtered = groupedProducts[type][category] || [];
+    }
+  }
+
+  renderProducts(filtered);
+}
 // Render Products
 function renderProducts(filteredProducts) {
   const productGrid = document.getElementById('product-grid');
@@ -84,18 +148,32 @@ document.getElementById('tab-market').addEventListener('click', () => {
 });
 
 // Filters
-document.getElementById('type-filter').addEventListener('change', applyFilters);
+document.getElementById('type-filter').addEventListener('change', (event) => {
+  const selectedType = event.target.value;
+  updateCategoryFilter(selectedType);
+  applyFilters();
+});
+
 document.getElementById('category-filter').addEventListener('change', applyFilters);
 
 function applyFilters() {
   const type = document.getElementById('type-filter').value;
   const category = document.getElementById('category-filter').value;
 
-  const filtered = products.filter(product => {
-    const typeMatch = type === 'all' || product.type === type;
-    const categoryMatch = category === 'all' || product.category === category;
-    return typeMatch && categoryMatch;
-  });
+  let filtered = [];
+
+  if (type === 'all') {
+    // Show all products
+    filtered = products;
+  } else {
+    if (category === 'all') {
+      // Show all categories for the selected type
+      filtered = products.filter(p => p.type === type);
+    } else {
+      // Show only the selected category
+      filtered = products.filter(p => p.type === type && p.category === category);
+    }
+  }
 
   renderProducts(filtered);
 }
