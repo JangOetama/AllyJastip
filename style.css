@@ -209,6 +209,9 @@ nav button span {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
 }
 
 .product-card {
@@ -218,6 +221,7 @@ nav button span {
   transition: all 0.3s ease;
   position: relative;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  aspect-ratio: 1 / 1; /* Gambar akan selalu persegi */
 }
 
 .product-card:hover {
@@ -225,33 +229,37 @@ nav button span {
   box-shadow: 0 8px 25px rgba(255, 105, 180, 0.2);
 }
 
-.product-card::before {
-  content: '✨ New';
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: var(--primary-pink);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 0.8em;
-  font-weight: bold;
+.image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.image-container {
-  border-radius: 20px 20px 0 0;
-  overflow: hidden;
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Gambar akan menyesuaikan ukuran tanpa distorsi */
+  transition: transform 0.3s ease;
+}
+
+.image-container img:hover {
+  transform: scale(1.1); /* Efek zoom saat hover */
 }
 
 .product-card p {
   padding: 15px;
   margin: 0;
   font-size: 0.95em;
+  text-align: center;
 }
 
 .price {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   color: var(--primary-pink);
   font-weight: bold;
