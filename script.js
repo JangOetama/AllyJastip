@@ -18,31 +18,13 @@ fetch('biolink_data.json')
 
 // Load Market Data
 let products = [];
-let groupedProducts = {}; // Struktur untuk mengelompokkan produk
-
 fetch('grouped_products.json')
   .then(response => response.json())
   .then(data => {
     products = data;
 
-    // Kelompokkan produk berdasarkan type dan category
-    products.forEach(product => {
-      const type = product.type;
-      const category = product.category;
-
-      if (!groupedProducts[type]) {
-        groupedProducts[type] = {};
-      }
-
-      if (!groupedProducts[type][category]) {
-        groupedProducts[type][category] = [];
-      }
-
-      groupedProducts[type][category].push(product);
-    });
-
     // Populate Type filter
-    const types = Object.keys(groupedProducts);
+    const types = [...new Set(products.map(p => p.type))];
     const typeFilter = document.getElementById('type-filter');
     types.forEach(type => {
       const option = document.createElement('option');
@@ -56,6 +38,9 @@ fetch('grouped_products.json')
 
     // Initial render
     applyFilters();
+  })
+  .catch(error => {
+    console.error("Error loading grouped_products.json:", error);
   });
 
 // Update Category filter based on selected Type
@@ -71,7 +56,6 @@ function updateCategoryFilter(selectedType) {
 
   // Add categories for the selected type or all types
   if (selectedType === 'all') {
-    // Get all unique categories from all types
     const allCategories = [...new Set(products.map(p => p.category))];
     allCategories.forEach(category => {
       const option = document.createElement('option');
@@ -80,8 +64,7 @@ function updateCategoryFilter(selectedType) {
       categoryFilter.appendChild(option);
     });
   } else {
-    // Get categories for the selected type
-    const categories = Object.keys(groupedProducts[selectedType]);
+    const categories = [...new Set(products.filter(p => p.type === selectedType).map(p => p.category))];
     categories.forEach(category => {
       const option = document.createElement('option');
       option.value = category;
@@ -94,7 +77,13 @@ function updateCategoryFilter(selectedType) {
 // Render Products
 function renderProducts(filteredProducts) {
   const productGrid = document.getElementById('product-grid');
-  productGrid.innerHTML = '';
+  productGrid.innerHTML = ''; // Clear existing products
+
+  if (filteredProducts.length === 0) {
+    productGrid.innerHTML = '<p>No products found.</p>';
+    return;
+  }
+
   filteredProducts.forEach(product => {
     const card = document.createElement('div');
     card.className = 'product-card';
@@ -140,6 +129,24 @@ function applyFilters() {
 
   renderProducts(filtered);
 }
+
+// Tab Switching
+document.getElementById('tab-biolink').addEventListener('click', () => {
+  document.getElementById('biolink-section').classList.add('active');
+  document.getElementById('market-section').classList.remove('active');
+  document.getElementById('tab-biolink').classList.add('active');
+  document.getElementById('tab-market').classList.remove('active');
+});
+
+document.getElementById('tab-market').addEventListener('click', () => {
+  document.getElementById('biolink-section').classList.remove('active');
+  document.getElementById('market-section').classList.add('active');
+  document.getElementById('tab-biolink').classList.remove('active');
+  document.getElementById('tab-market').classList.add('active');
+
+  // Trigger filter agar produk Market langsung muncul
+  applyFilters();
+});
 
 // Event Listeners
 document.getElementById('type-filter').addEventListener('change', (event) => {
