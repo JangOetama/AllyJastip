@@ -26,8 +26,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4 playwright
-          npx playwright install
+
     
       - name: Remove Existing grouped_products.json
         run: |
@@ -37,6 +36,8 @@ jobs:
 
       - name: Run Scrape Script
         run: |
+          pip install requests beautifulsoup4 playwright
+          playwright install
           which playwright
           playwright --version
           python scrape.py
