@@ -28,9 +28,9 @@ jobs:
       # Langkah 3: Install dependencies
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip # Memastikan pip adalah versi terbaru
-          pip install requests beautifulsoup4 playwright # Menambahkan playwright karena digunakan untuk scraping lynk.id
-          playwright install # Menginstal browser yang diperlukan oleh Playwright [[4]]
+          python -m pip install --upgrade pip 
+          pip install requests beautifulsoup4 playwright 
+          playwright install 
 
       # Langkah 4: Hapus file grouped_products.json jika sudah ada
       - name: Remove Existing grouped_products.json (if exists)
