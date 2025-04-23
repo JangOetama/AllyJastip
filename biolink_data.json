@@ -1,0 +1,22 @@
+{
+  "profile": {
+    "photo": "https://via.placeholder.com/150",
+    "instagram_id": "@waffalya",
+    "followers": "12.3k",
+    "description": "Hai! Aku Waffa, seorang content creator yang suka review produk bayi, beauty, dan mpasi. Yuk follow aku!"
+  },
+  "buttons": [
+    {
+      "name": "Instagram Jastip",
+      "link": "https://www.instagram.com/waffalya_jastip"
+    },
+    {
+      "name": "Instagram Buku",
+      "link": "https://www.instagram.com/waffalya_buku"
+    },
+    {
+      "name": "Instagram Frozen",
+      "link": "https://www.instagram.com/waffalya_frozen"
+    }
+  ]
+}
