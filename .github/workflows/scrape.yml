@@ -28,12 +28,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 playwright
           npx playwright install
-
-      - name: Debugging
-        run: |
-          which playwright
-          playwright --version
-          ls -la node_modules/.bin/
     
       - name: Remove Existing grouped_products.json
         run: |
@@ -42,7 +36,10 @@ jobs:
           fi
 
       - name: Run Scrape Script
-        run: python scrape.py
+        run: |
+          which playwright
+          playwright --version
+          python scrape.py
 
       # Pastikan menggunakan xvfb untuk mode headful jika diperlukan
       - name: Run with Xvfb (opsional)
