@@ -1,230 +1,80 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const productGrid = document.getElementById('productGrid');
-    const categoryFilter = document.getElementById('categoryFilter');
-    let productData = [];
-    let descriptionData = [];
+// Load BioLink Data
+fetch('biolink_data.json')
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('profile-photo').src = data.profile.photo;
+    document.getElementById('instagram-id').textContent = data.profile.instagram_id;
+    document.getElementById('followers').textContent = `${data.profile.followers} Followers`;
+    document.getElementById('description').textContent = data.profile.description;
 
-    // Memuat data produk dan deskripsi
-    const loadProducts = () => {
-        Promise.all([
-            fetch('grouped_products.json').then(response => response.json()), // Menggunakan group_products.json
-            fetch('description.json').then(response => response.json())
-        ])
-            .then(([products, descriptions]) => {
-                productData = products;
-                descriptionData = descriptions;
-                renderCategories();
-                renderProducts();
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    };
-
-    // Render filter kategori
-    const renderCategories = () => {
-        const categories = ['All', ...new Set(descriptionData.map(desc => desc.categoryType))];
-        categoryFilter.innerHTML = `
-            ${categories.map(category => `<button onclick="filterProducts('${category}')">${category}</button>`).join('')}
-        `;
-    };
-
-// Fungsi untuk menghasilkan deskripsi produk
-const generateDescription = (desc, product) => {
-    if (!desc) return 'Deskripsi tidak tersedia';
-
-    // Mengambil data dari description.json
-    const itemName = desc.itemName ?? 'Nama Tidak Tersedia'; // Nilai default jika undefined
-    const capacityML = desc.capacityML ? `${Math.round(parseFloat(desc.capacityML))} mL` : '';
-    const capacityL = desc.capacityL ? `${parseFloat(desc.capacityL).toFixed(1)} L` : '';
-    const category = [desc.categoryType, desc.typeProduct, desc.productType].filter(Boolean).join(' | ');
-
-    // Mengambil warna dari semua deskripsi yang sesuai dengan grup produk
-    const colors = product.name
-        .map(name => {
-            const descForName = descriptionData.find(d => d.itemCode === name);
-            return descForName?.itemColor;
-        })
-        .filter(Boolean); // Hanya ambil warna yang ada
-    const colorList = colors.length > 0 ? `- *Warna :* ${colors.join(', ')}` : '';
-
-    // Mengambil pola dari deskripsi pertama (jika ada)
-    const pattern = desc.itemPattern ? `- *Pola :* ${desc.itemPattern}` : '';
-
-    // Menyusun nama item sebagai list
-    const itemNameList = product.name.map(name => {
-        const descForName = descriptionData.find(d => d.itemCode === name);
-        return descForName?.itemNamebyHC ?? descForName?.itemName ?? name;
+    const buttonContainer = document.getElementById('button-container');
+    data.buttons.forEach(button => {
+      const btn = document.createElement('a');
+      btn.href = button.link;
+      btn.textContent = button.name;
+      buttonContainer.appendChild(btn);
     });
+  });
 
-    return {
-        itemName: itemName,
-        descriptionText: `- *Nama Item :* 
-    ${itemNameList.join('\r\n    ')}
-- *Kapasitas :* ${[capacityML, capacityL].filter(Boolean).join(', ')}
-- *Kategori :* ${category}
-${colorList ? `${colorList}\n` : ''}
-${pattern ? `${pattern}\n` : ''}`
-    };
-};
-    // Fungsi untuk menghitung tanggal Close PO dan Estimasi Ready
-    const calculateDates = () => {
-        const today = new Date();
-        const dayOfWeek = today.getDay(); // 0 (Minggu) - 6 (Sabtu)
-        const date = today.getDate();
-        const month = today.getMonth();
-        const year = today.getFullYear();
+// Load Market Data
+let products = [];
+fetch('grouped_products.json')
+  .then(response => response.json())
+  .then(data => {
+    products = data;
+    renderProducts(products);
+  });
 
-        // Hitung hari Senin minggu depan
-        let daysUntilNextMonday;
-        if (dayOfWeek === 1) {
-            // Jika hari ini adalah hari Senin, tambahkan 7 hari untuk mendapatkan Senin minggu depan
-            daysUntilNextMonday = 7;
-        } else {
-            // Untuk hari lain, hitung berapa hari lagi sampai hari Senin minggu depan
-            daysUntilNextMonday = (8 - dayOfWeek) % 7;
-        }
+// Render Products
+function renderProducts(filteredProducts) {
+  const productGrid = document.getElementById('product-grid');
+  productGrid.innerHTML = '';
+  filteredProducts.forEach(product => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <img src="${product.image[0]}" alt="${product.name.join(', ')}">
+      <p>${product.name.join(', ')}</p>
+      <p class="price">
+        ${product.discountPercentage !== "0%" ? `<span class="original-price">${product.originalPrice}</span>` : ''}
+        <span class="discounted-price">${product.discountedPrice}</span>
+      </p>
+    `;
+    if (product.link) {
+      card.onclick = () => window.open(product.link, '_blank');
+    }
+    productGrid.appendChild(card);
+  });
+}
 
-        const closePODate = new Date(year, month, date + daysUntilNextMonday);
-
-        // Estimasi ready: Tidak ada tanggal pasti, hanya pesan default
-        const estimasiReadyMessage = "Maksimal 1 minggu setelah pembayaran";
-
-        return {
-            closePO: formatDate(closePODate),
-            estimasiReady: estimasiReadyMessage,
-        };
-    };
-
-    // Fungsi untuk memformat tanggal menjadi "dd MMMM yyyy"
-    const formatDate = (date) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('id-ID', options);
-    };
-
-    // Render produk dalam grid
-    const renderProducts = (category = 'All') => {
-        productGrid.innerHTML = '';
-        const filteredProducts = category === 'All'
-            ? productData
-            : productData.filter(product => {
-                const desc = descriptionData.find(desc => product.name.includes(desc.itemCode)); // Sesuaikan dengan grup
-                return desc && desc.categoryType === category;
-            });
-
-        // Hitung tanggal Close PO dan Estimasi Ready
-        const { closePO, estimasiReady } = calculateDates();
-
-        filteredProducts.forEach(product => {
-    const description = descriptionData.find(desc => product.name.includes(desc.itemCode)); // Sesuaikan dengan grup
-
-    // Parsing harga
-    const parsePrice = (price) => parseFloat(price.replace(/,/g, ''));
-    const originalPrice = parsePrice(product.originalPrice);
-    const discountPercentage = parseFloat(product.discountPercentage);
-    const jastipDiscount = 10; // Diskon Jastip tetap 10%
-    const jastipPrice = originalPrice * (1 - (discountPercentage - jastipDiscount) / 100);
-    const min1 = 3, min2 = 5, min3 = 10;
-    const jastipPrice1 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 1)) / 100);
-    const jastipPrice2 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 2)) / 100);
-    const jastipPrice3 = originalPrice * (1 - (discountPercentage - (jastipDiscount - 3)) / 100);
-    // Format harga
-    const formatPrice = (price) => new Intl.NumberFormat('id-ID').format(price);
-
-    // Menghasilkan deskripsi produk
-    const { itemName, descriptionText } = generateDescription(description, product); // Menambahkan parameter product
-
-    const fullDescription = `🌟 *[JASTIP LOCK & LOCK ${itemName}]* 🌟  \n
-🔥 *Harga Spesial Ally Jastip :*
-    ~Rp ${formatPrice(originalPrice)}~ → *Rp ${formatPrice(jastipPrice)}* _(Hemat Rp ${formatPrice(originalPrice - jastipPrice)}!)_
-
-🎯 *Skema Diskon Menarik :*
-✅ Min. *${min1} pcs → Rp ${formatPrice(jastipPrice1)}/pcs*
-✅ Min. *${min2} pcs → Rp ${formatPrice(jastipPrice2)}/pcs*
-✅ Min. *${min3} pcs → Rp ${formatPrice(jastipPrice3)}/pcs*
-
-📦 *Deskripsi Produk :*
-${descriptionText}
-📅 *Detail Order :*
-- Close PO: _${closePO}_
-- Estimasi Ready: _${estimasiReady}_
-
-⚠️ *Catatan Penting :*
-- Pembelian minimal *1* pcs .
-- Barang dikirim sesuai urutan pembayaran.
-- Pastikan cek stok warna sebelum memesan!
-
-====================
-🛒 List Pemesanan :
-    Nama + 4 Digit Akhir No WA
-1. ...
-`;
-
-            // Fungsi untuk membuat tautan WhatsApp
-            const createWhatsAppLink = (description) => {
-                const text = encodeURIComponent(description);
-                return `https://wa.me/?text=${text}`;
-            };
-
-            const productCard = document.createElement('div');
-            productCard.classList.add('product-card');
-            productCard.innerHTML = `
-    <div class="product-images">
-        ${product.image.map((img, index) => `
-            <a href="/AllyJastip/detail.html?item=${product.name[index]}">
-                <img src="${img}" alt="${product.name[index]}">
-            </a>
-        `).join('')}
-    </div>
-    <h3>${product.name.join(', ')}</h3>
-    <p><s>Rp ${formatPrice(originalPrice)}</s> Rp ${formatPrice(jastipPrice)}</p>
-    <div class="product-actions">
-        <button 
-            class="share-btn" 
-            onclick="window.open('${createWhatsAppLink(fullDescription)}', '_blank');"
-        >
-            Share to WhatsApp
-        </button>
-        <button 
-            class="download-btn" 
-            onclick="downloadImages(${JSON.stringify(product.image)}, ${JSON.stringify(product.name)})"
-        >
-            Download Gambar
-        </button>
-    </div>
-`;
-            productGrid.appendChild(productCard);
-        });
-    };
-
-    // Fungsi untuk mengunduh semua gambar dalam grup
-    window.downloadImages = (urls, filenames) => {
-        urls.forEach((url, index) => {
-            const proxiedUrl = `https://cors-anywhere.herokuapp.com/${url}`; // Tambahkan proxy
-            console.log('Downloading image from:', proxiedUrl);
-            console.log('Filename:', filenames[index]);
-
-            fetch(proxiedUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Error fetching image: ${response.status}`);
-                    }
-                    return response.blob();
-                })
-                .then(blob => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `${filenames[index]}.jpg`;
-                    link.click();
-                    URL.revokeObjectURL(link.href); // Bersihkan URL setelah digunakan
-                })
-                .catch(error => console.error('Error downloading image:', error));
-        });
-    };
-
-    // Fungsi filter produk berdasarkan kategori
-    window.filterProducts = (category) => {
-        renderProducts(category);
-    };
-
-    // Memuat data saat halaman dimuat
-    loadProducts();
+// Tab Switching
+document.getElementById('tab-biolink').addEventListener('click', () => {
+  document.getElementById('biolink-section').classList.add('active');
+  document.getElementById('market-section').classList.remove('active');
+  document.getElementById('tab-biolink').classList.add('active');
+  document.getElementById('tab-market').classList.remove('active');
 });
+
+document.getElementById('tab-market').addEventListener('click', () => {
+  document.getElementById('biolink-section').classList.remove('active');
+  document.getElementById('market-section').classList.add('active');
+  document.getElementById('tab-biolink').classList.remove('active');
+  document.getElementById('tab-market').classList.add('active');
+});
+
+// Filters
+document.getElementById('type-filter').addEventListener('change', applyFilters);
+document.getElementById('category-filter').addEventListener('change', applyFilters);
+
+function applyFilters() {
+  const type = document.getElementById('type-filter').value;
+  const category = document.getElementById('category-filter').value;
+
+  const filtered = products.filter(product => {
+    const typeMatch = type === 'all' || product.type === type;
+    const categoryMatch = category === 'all' || product.category === category;
+    return typeMatch && categoryMatch;
+  });
+
+  renderProducts(filtered);
+}
