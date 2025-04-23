@@ -46,6 +46,14 @@ main {
   padding: 20px;
 }
 
+section {
+  display: none;
+}
+
+section.active {
+  display: block;
+}
+
 .button-container {
   display: flex;
   flex-direction: column;
