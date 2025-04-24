@@ -251,6 +251,13 @@ nav button span {
 }
 
 
+.product-card p {
+  padding: 15px;
+  margin: 0;
+  font-size: 0.95em;
+  text-align: center;
+}
+
 .price {
   display: flex;
   align-items: center;
