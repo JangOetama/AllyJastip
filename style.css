@@ -253,12 +253,13 @@ nav button span {
   padding: 10px;
   margin: 0;
   font-size: 0.85em;
-  text-align: center;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap; 
-  max-width: 100%; 
+    display: -webkit-box; /* Aktifkan mode box */
+    -webkit-box-orient: vertical; /* Orientasi vertikal */
+    overflow: hidden; /* Sembunyikan teks yang melebihi batas */
+    text-overflow: ellipsis; /* Tambahkan elipsis (...) */
+    -webkit-line-clamp: 2; /* Batasi teks menjadi 2 baris */
+    line-height: 1.5; /* Atur tinggi baris (opsional) */
+    max-height: 3em; /* Sesuaikan dengan tinggi 2 baris */
 }
 
 .price {
