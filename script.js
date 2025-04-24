@@ -129,20 +129,20 @@ function renderProducts(filteredProducts) {
     });
 }
 
-        function applyFilters() {
-            const type = document.getElementById('type-filter').value;
-            const category = document.getElementById('category-filter').value;
-            const searchText = document.getElementById('search-box').value.toLowerCase();
+function applyFilters() {
+    const type = document.getElementById('type-filter').value;
+    const category = document.getElementById('category-filter').value;
+    const searchText = document.getElementById('search-box').value.toLowerCase();
 
-            let filtered = products.filter(p => {
-                const typeMatch = type === 'all' || p.type === type;
-                const categoryMatch = category === 'all' || p.category === category;
-                const searchMatch = p.name.some(name => name.toLowerCase().includes(searchText));
-                return typeMatch && categoryMatch && searchMatch;
-            });
+    let filtered = products.filter(p => {
+        const typeMatch = type === 'all' || p.type === type;
+        const categoryMatch = category === 'all' || p.category === category;
+        const searchMatch = p.name.toLowerCase().includes(searchText); // Modifikasi di sini
+        return typeMatch && categoryMatch && searchMatch;
+    });
 
-            renderProducts(filtered);
-        }
+    renderProducts(filtered);
+}
 
         // Event Listeners
         document.getElementById('type-filter').addEventListener('change', function() {
