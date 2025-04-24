@@ -71,7 +71,7 @@ function renderProducts(filteredProducts) {
         product.image.forEach((imgSrc, index) => {
             const img = document.createElement('img');
             img.src = imgSrc;
-            img.alt = product.name.join(', ');
+            img.alt = product.name; // Gunakan product.name secara langsung
             img.style.opacity = index === 0 ? '1' : '0';
             imageContainer.appendChild(img);
         });
@@ -80,17 +80,17 @@ function renderProducts(filteredProducts) {
         if (product.image.length > 1) {
             let currentIndex = 0;
             const totalImages = product.image.length;
-            
+
             // Fungsi untuk mengganti gambar
             const cycleImages = () => {
                 const images = imageContainer.querySelectorAll('img');
-                
+
                 // Fade out gambar saat ini
                 images[currentIndex].style.opacity = '0';
-                
+
                 // Update index
                 currentIndex = (currentIndex + 1) % totalImages;
-                
+
                 // Fade in gambar berikutnya
                 setTimeout(() => {
                     images[currentIndex].style.opacity = '1';
@@ -107,27 +107,27 @@ function renderProducts(filteredProducts) {
             });
         }
 
-                // Product Info
-                const productInfo = document.createElement('div');
-                productInfo.innerHTML = `
-                    <p>${product.name.join(', ')}</p>
-                    <p class="price">
-                        ${product.discountPercentage !== "0%" ? 
-                            `<span class="original-price">${product.originalPrice}</span>` : ''}
-                        <span class="discounted-price">${product.discountedPrice}</span>
-                    </p>
-                `;
+        // Product Info
+        const productInfo = document.createElement('div');
+        productInfo.innerHTML = `
+            <p>${product.name}</p> <!-- Gunakan product.name secara langsung -->
+            <p class="price">
+                ${product.discountPercentage !== "0%" ? 
+                    `<span class="original-price">${product.originalPrice}</span>` : ''}
+                <span class="discounted-price">${product.discountedPrice}</span>
+            </p>
+        `;
 
-                card.appendChild(imageContainer);
-                card.appendChild(productInfo);
+        card.appendChild(imageContainer);
+        card.appendChild(productInfo);
 
-                if(product.link) {
-                    card.onclick = () => window.open(product.link, '_blank');
-                }
-
-                productGrid.appendChild(card);
-            });
+        if (product.link) {
+            card.onclick = () => window.open(product.link, '_blank');
         }
+
+        productGrid.appendChild(card);
+    });
+}
 
         function applyFilters() {
             const type = document.getElementById('type-filter').value;
