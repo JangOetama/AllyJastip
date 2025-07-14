@@ -19,6 +19,7 @@
     <nav>
       <button id="tab-biolink" class="active">BioLink</button>
       <button id="tab-market">Market</button>
+      <button id="tab-analytics">Analytics</button>
     </nav>
   </header>
 
@@ -41,6 +42,65 @@
         </select>
       </div>
       <div class="product-grid" id="product-grid"></div>
+    </section>
+
+    <!-- Analytics Section -->
+    <section id="analytics-section">
+      <div class="analytics-container">
+        <h2>📊 Business Analytics Dashboard</h2>
+        
+        <!-- Key Metrics Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <h3>Total Products</h3>
+            <div class="metric-value" id="total-products">0</div>
+            <div class="metric-subtitle">Active listings</div>
+          </div>
+          <div class="metric-card">
+            <h3>Average Discount</h3>
+            <div class="metric-value" id="avg-discount">0%</div>
+            <div class="metric-subtitle">Across all products</div>
+          </div>
+          <div class="metric-card">
+            <h3>Total Savings</h3>
+            <div class="metric-value" id="total-savings">Rp 0</div>
+            <div class="metric-subtitle">Customer savings</div>
+          </div>
+          <div class="metric-card">
+            <h3>Price Range</h3>
+            <div class="metric-value" id="price-range">Rp 0 - Rp 0</div>
+            <div class="metric-subtitle">Min - Max</div>
+          </div>
+        </div>
+
+        <!-- Product Categories Analysis -->
+        <div class="analytics-section-block">
+          <h3>📈 Product Categories</h3>
+          <div class="category-analysis" id="category-analysis"></div>
+        </div>
+
+        <!-- Top Products by Discount -->
+        <div class="analytics-section-block">
+          <h3>🔥 Top Discounted Products</h3>
+          <div class="top-products" id="top-discounted"></div>
+        </div>
+
+        <!-- Price Distribution -->
+        <div class="analytics-section-block">
+          <h3>💰 Price Distribution Analysis</h3>
+          <div class="price-distribution" id="price-distribution"></div>
+        </div>
+
+        <!-- Export Options -->
+        <div class="analytics-section-block">
+          <h3>📤 Export Data</h3>
+          <div class="export-buttons">
+            <button onclick="exportAnalytics('csv')" class="export-btn">Export CSV</button>
+            <button onclick="exportAnalytics('json')" class="export-btn">Export JSON</button>
+            <button onclick="generateReport()" class="export-btn">Generate Report</button>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
